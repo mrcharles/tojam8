@@ -39,20 +39,27 @@ function World:init(level, tilesize)
     	end
     end
     function addTile(x,y,tile)
-    	self:addRectangle( (x-1) * tilesize, (y-1) * tilesize, tilesize, tilesize, tile.color)
+    	if tile then
+    		self:addRectangle( (x-1) * tilesize, (y-1) * tilesize, tilesize, tilesize, tile)
+    	end
     end
 
-    level.map:iterate(addTile, isNotWalkable)
+    level.map:iterate(addTile)--, isNotWalkable)
 	return self
 end
 
-function World:addRectangle(t,l,w,h,c)
+function World:addRectangle(t,l,w,h,tile)
 	local parts = self.parts
 
-	local piece = { f = "rectangle", color = c, params = {"fill", t,l,w,h}, shape = self.Collider:addRectangle(t,l,w,h)}
+	local piece
+	if not tile.walkable then
+		piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h}, shape = self.Collider:addRectangle(t,l,w,h)}
+		self.Collider:setPassive(piece.shape)
+		piece.shape.world = self
+	else
+		piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h} }
+	end
 
-	self.Collider:setPassive(piece.shape)
-	piece.shape.world = self
 	table.insert( parts, piece)
 end
 
@@ -105,7 +112,7 @@ function World:draw()
 		love.graphics.setColor(p.color)
 		love.graphics[p.f](unpack(p.params))
 
-		if debugDraw then
+		if debugDraw and p.shape then
 			love.graphics.setColor(255,0,0)
 			p.shape:draw()
 		end

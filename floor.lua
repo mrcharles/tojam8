@@ -3,10 +3,18 @@ local Map = require 'fabricate.map'
 
 local Floor = Tools:Class()
 
+local debugGen = true
+local oldPrint = print
+function print(...)
+	if debugGen then
+		oldPrint(...)
+	end
+end
+
 local spacedesc = {
 	entrance = {
 		walkable = true,
-		color = { 255,255,255 }
+		color = { 200,200,200 }
 	},
 	wall = {
 		walkable = false,
@@ -30,14 +38,15 @@ local spacedesc = {
 local ruleset = {
 	lobby = {
 		gen = {
-			split = { "wall", 1 },
+			split = { "wall", {1} },
 			spaces = {
 				{
 					type = "entrance",
-					minsize = 0.5,			
+					minsize = 0.4,
+					maxsize = 0.8,			
 				},
 				gen = {
-					split = { "hall", 1, 2 }
+					split = { "hall", {1, 2} }
 				}
 			}
 		}
@@ -61,7 +70,7 @@ function Floor:init(width,height,metatype,type)
 	self:stampSpace("outerwall", 1, height, { width, 1 }) -- bottom wall
 
 
-	--self:generate()
+	self:generate()
 
 	return self
 end
@@ -91,15 +100,24 @@ function Floor:genSpace(gen, x, y, size )
 	if gen.split then -- subdivide
 		local spaces = gen.spaces
 		if gen.split[1] == "wall" then
-			for i=1,math.random(gen.split[2], gen.split[3]) do
+			for i=1,math.random(unpack(gen.split[2])) do
 				if spaces[i] then -- guaranteed room
+					print("doing space",i)
 					local s1, s2 = sizeIndexers()
-					local min,max = math.floor(spaces[i].minsize*size[i1]) or 1, size[i1]
+					local min,max = math.floor(spaces[i].minsize * size[s1]) or 1, math.floor(spaces[i].maxsize * (size[s1]-1)) or size[s1]-1
 
 					local newsize = {}
-					newsize[i1] = math.random(min,max)
-					newsize[i2] = size[i2]
+					newsize[s1] = math.random(min,max)
+					newsize[s2] = size[s2]
 
+					self:stampSpace(spaces[i].type, x, y, newsize)
+
+					--now bordering wall
+					if s1 == 2 then -- horiz wall
+						self:stampSpace("wall", x, y + newsize[2], { newsize[1], 1} )
+					else
+						self:stampSpace("wall", x + newsize[1], y, { 1, newsize[2]} )
+					end
 				end
 			end
 		end
@@ -111,8 +129,8 @@ function Floor:generate()
 	local gen = rules.gen
 	local spaces = rules.spaces
 
-
-	self:genSpace(gen, 1, 1, {self.width, self.height})
+	--just gen the non-outer wall space
+	self:genSpace(gen, 2, 2, {self.width-2, self.height-2})
 
 
 end
