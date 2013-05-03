@@ -60,6 +60,7 @@ local levels = {
 			{
 				room = "mail",
 				size = 0.2,
+				doors = { "right" },
 			},
 			{
 				room = "hall",
@@ -68,13 +69,15 @@ local levels = {
 			{
 				room = "elevator",
 				size = 0.2,
+				doors = { "right", "left" },
 			},
 			{
 				room = "hall",
 				size = 0.15,
 			},
 			{ 
-				room = "garbage"
+				room = "garbage",
+				doors = {"left"}
 			}
 		}
 	}
@@ -109,15 +112,37 @@ local function sizeIndexers()
 	end
 end
 
-function Floor:stampSpace(type, x, y, size, dir)
+function Floor:stampSpace(type, x, y, size, dir, doors)
 	local desc = assert(spacedesc[type], string.format("unfound space type '%s'",type))
 
 	local map = self.map
 	for i=x,x+size[1]-1 do
 		for j=y,y+size[2]-1 do
-			map:set(i,j, {walkable = desc.walkable, color = desc.color, border = desc.border})
+			local ok = true
+			local t = map:get(i,j)
+			if t and type == "wall" and t.door then
+				ok = false
+			end
+
+			if ok then
+				map:set(i,j, {walkable = desc.walkable, color = desc.color, border = desc.border})
+			end
 		end
 	end
+
+	if doors then
+		for i,door in ipairs(doors) do
+			if door == "left" then
+				local x,y = x-1, y + math.random(1, size[2]-1)
+				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorl"})
+			elseif door == "right" then
+				local x,y = x + size[1], y + math.random(1, size[2]-1)
+				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorr"})
+			end
+			
+		end
+	end
+
 	if type == "hall" then -- need to stamp out the ends of the hall, assuming they are not borders. 
 		if dir == "x" then -- knock out edge on y
 			-- top first
@@ -173,7 +198,7 @@ function Floor:genSpace(gen, startx, starty, range )
 				print("made room size", size)
 				table.insert( rooms, {x, y, range[1], size -1, type = space.room })
 				--stamp the room
-				self:stampSpace(space.room, x, y, { range[1], size}, "y")
+				self:stampSpace(space.room, x, y, { range[1], size}, "y", space.doors)
 			else
 				self:genSpace(space, x, y, { range[1], range[2]-(y-starty)})
 				--self:stampSpace("garbage", x, y, { range[1], range[2]-(y-starty)})
@@ -196,7 +221,7 @@ function Floor:genSpace(gen, startx, starty, range )
 				print("made room",space.room,"size", size)
 				table.insert( rooms, {x, y, size-1, range[2], type = space.room })
 				--stamp the room
-				self:stampSpace(space.room, x, y, { size, range[2]}, "x")
+				self:stampSpace(space.room, x, y, { size, range[2]}, "x", space.doors)
 			else
 				self:genSpace(space, x, y, { range[1]-(x-startx), range[2]})
 				--self:stampSpace("garbage", x, y, { range[1], range[2]-(y-starty)})
@@ -211,6 +236,10 @@ function Floor:genSpace(gen, startx, starty, range )
 				x = x + 1
 			end
 		end
+	end
+
+	for i,v in ipairs(rooms) do
+		print("have room:", v.type)
 	end
 
 end
