@@ -15,7 +15,7 @@ function title:init()
 	self.titlefont = love.graphics.newFont("assets/SpecialElite.ttf", 72)
 	self.buttonfont = love.graphics.newFont("assets/SpecialElite.ttf", 48)
 
-	self.newgamebutton = Button("New Game", self.buttonfont, 600, 500, "right", {normal = {0,0,0}, hover = {50,50,50}})
+	self.newgamebutton = Button("New Game", self.buttonfont, 700, 400, "right", {normal = {0,0,0}, hover = {50,50,50}})
 	self.newgamebutton.pressaction = function(button)
 		Gamestate.switch(game)
 	end
@@ -42,7 +42,12 @@ end
 function title:draw()
 	love.graphics.setColor(0,0,0)
 	love.graphics.setFont(self.titlefont)
-	love.graphics.printf("The Office Event", 50,100, 800, "left")
+	love.graphics.push()
+	local jitter = 3
+	love.graphics.translate( math.random(-jitter,jitter), math.random(-jitter,jitter))
+	love.graphics.printf("The Office Event", 50,150, 800, "left")
+
+	love.graphics.pop()
 
 end
 
