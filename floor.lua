@@ -77,7 +77,7 @@ local levels = {
 			},
 			{ 
 				room = "garbage",
-				doors = {"left"}
+				doors = {"left", "top"}
 			}
 		}
 	}
@@ -137,6 +137,12 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorl"})
 			elseif door == "right" then
 				local x,y = x + size[1], y + math.random(1, size[2]-1)
+				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorr"})
+			elseif door == "top" then
+				local x,y = x + math.random(1, size[1]-1), y - 1 
+				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorl"})
+			elseif door == "bottom" then
+				local x,y = x + math.random(1, size[1]-1), y + size[1]
 				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorr"})
 			end
 			
