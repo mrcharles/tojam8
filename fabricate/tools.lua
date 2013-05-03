@@ -109,7 +109,7 @@ function tools:wrap(val, range)
 	-- end
 
 	if val > range then
-		--print("wrapping",val,"to",val-range)
+		--print("wrapping",val,"to",val-range)	
 		return val - range
 	elseif val < 1 then
 		--print("wrapping",val,"to",val+range)
