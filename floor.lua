@@ -26,31 +26,57 @@ local spacedesc = {
 	},
 	outerwall = {
 		walkable = false,
+		border = true,
 		color = { 0,0,0},
 	},
 	window = {
 		walkable = false,
 		color = { 0, 255, 128 }
-	}
+	},
+	mail = {
+		walkable = true,
+		color = {128, 128, 255}
+	},
+	garbage = {
+		walkable = true,
+		color = {0, 128, 0}
+	},
+	elevator = {
+		walkable = true,
+		color = {128, 128, 0}
+	},
 
 }
 
-local ruleset = {
+local levels = {
 	lobby = {
-		gen = {
-			widthrange = {2,10},
-			heightrange = {2,10},
-			requiredrooms = {
-				"entrance",
-				"elevator",
+		dir = "y",
+		{
+			room = "entrance",
+			size = 0.7,
+		},
+		{
+			dir = "x",
+			{
+				room = "mail",
+				size = 0.2,
 			},
-			rooms = {
-				"mail",
-				"garbage",
-				"office",
+			{
+				room = "hall",
+				size = 0.15,
+			},
+			{
+				room = "elevator",
+				size = 0.2,
+			},
+			{
+				room = "hall",
+				size = 0.15,
+			},
+			{ 
+				room = "garbage"
 			}
 		}
-
 	}
 }
 
@@ -83,87 +109,117 @@ local function sizeIndexers()
 	end
 end
 
-function Floor:stampSpace(type, x, y, size)
-	local desc = spacedesc[type]
+function Floor:stampSpace(type, x, y, size, dir)
+	local desc = assert(spacedesc[type], string.format("unfound space type '%s'",type))
 
 	local map = self.map
 	for i=x,x+size[1]-1 do
 		for j=y,y+size[2]-1 do
-			map:set(i,j, {walkable = desc.walkable, color = desc.color})
+			map:set(i,j, {walkable = desc.walkable, color = desc.color, border = desc.border})
+		end
+	end
+	if type == "hall" then -- need to stamp out the ends of the hall, assuming they are not borders. 
+		if dir == "x" then -- knock out edge on y
+			-- top first
+			if y - 1 > 0 then
+				for i=1,size[1] do
+					local tile = map:get(x + i - 1, y-1)
+					if not tile.border then
+						map:set(x + i - 1, y-1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+					end
+				end
+			end
+			if y + 1 < map.height then
+				for i=1,size[1] do
+					local tile = map:get(x + i - 1, y+1)
+					if not tile.border then
+						map:set(x + i - 1, y+1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+					end
+				end
+			end
+		elseif dir == "y" then  -- knock out edge on x
+			-- top first
+			if x - 1 > 0 then
+				for i=1,size[2] do
+					local tile = map:get(x-1, y+i-1)
+					if not tile.border then
+						map:set(x-1, y+i-1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+					end
+				end
+			end
+			if x + 1 < map.width then
+				for i=1,size[2] do
+					local tile = map:get(x+1, y+i-1)
+					if not tile.border then
+						map:set(x+1, y+i-1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+					end
+				end
+			end
 		end
 	end
 end
 
-function Floor:genSpace(gen, startx, starty, size )
-
-	local done = false
+function Floor:genSpace(gen, startx, starty, range )
 
 	local rooms = {}
+	local x,y = startx, starty
 
-	local x, y = startx,starty
-	--horiz lines first
-	while not done do
-		local height = math.random(unpack(gen.heightrange))
-		print(height)
-		if y + height + 2 < starty + size[2] then
-			
+	print("gen", startx, starty, range[1], range[2])
+	if gen.dir == "y" then -- down
+		for i,space in ipairs(gen) do
+			local size = (space.size and math.floor(range[2] * space.size)) or range[2] - (y - starty)
 
-			self:stampSpace("wall", x, y + height, { size[2], 1 })
-			y = y + height + 1
-		else
-			done = true
+			if space.room then
+				print("made room size", size)
+				table.insert( rooms, {x, y, range[1], size -1, type = space.room })
+				--stamp the room
+				self:stampSpace(space.room, x, y, { range[1], size}, "y")
+			else
+				self:genSpace(space, x, y, { range[1], range[2]-(y-starty)})
+				--self:stampSpace("garbage", x, y, { range[1], range[2]-(y-starty)})
+			end
+
+			y = y + size
+
+			if space.size then
+				--put a wall
+				self:stampSpace("wall", x, y, { range[1], 1 })
+				y = y + 1
+			end
+		end
+	elseif gen.dir == "x" then -- across
+		for i,space in ipairs(gen) do
+			print("size input", range[1], space.size, x)
+			local size = (space.size and math.floor(range[1] * space.size)) or range[1] - (x - startx)
+
+			if space.room then
+				print("made room",space.room,"size", size)
+				table.insert( rooms, {x, y, size-1, range[2], type = space.room })
+				--stamp the room
+				self:stampSpace(space.room, x, y, { size, range[2]}, "x")
+			else
+				self:genSpace(space, x, y, { range[1]-(x-startx), range[2]})
+				--self:stampSpace("garbage", x, y, { range[1], range[2]-(y-starty)})
+			end
+
+			x = x + size
+
+			if space.size then
+				--put a wall 
+				print("made wall space 1")
+				self:stampSpace("wall", x, y, { 1, range[2]})
+				x = x + 1
+			end
 		end
 	end
 
-	done = false
-	x,y = startx,starty
-	--vert lines second
-	while not done do
-		local width = math.random(unpack(gen.widthrange))
-
-		if x + width + 2 < startx + size[1] then
-			self:stampSpace("wall", x + width, y, { 1, size[1] })
-			x = x + width + 1
-		else
-			done = true
-		end
-	end
-
-	-- local newspaces = {}
-	-- if gen.split then -- subdivide
-	-- 	local spaces = gen.spaces
-	-- 	if gen.split[1] == "wall" then
-	-- 		for i=1,math.random(unpack(gen.split[2])) do
-	-- 			if spaces[i] then -- guaranteed room
-	-- 				print("doing space",i)
-	-- 				local s1, s2 = sizeIndexers()
-	-- 				local min,max = math.floor(spaces[i].minsize * size[s1]) or 1, math.floor(spaces[i].maxsize * (size[s1]-1)) or size[s1]-1
-
-	-- 				local newsize = {}
-	-- 				newsize[s1] = math.random(min,max)
-	-- 				newsize[s2] = size[s2]
-
-	-- 				self:stampSpace(spaces[i].type, x, y, newsize)
-
-	-- 				--now bordering wall
-	-- 				if s1 == 2 then -- horiz wall
-	-- 					self:stampSpace("wall", x, y + newsize[2], { newsize[1], 1} )
-	-- 				else
-	-- 					self:stampSpace("wall", x + newsize[1], y, { 1, newsize[2]} )
-	-- 				end
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 end
 
 function Floor:generate()
-	local rules = ruleset[self.metatype]
-	local gen = rules.gen
-	local spaces = rules.spaces
-
+	local level = levels[self.metatype]
+	
 	--just gen the non-outer wall space
-	self:genSpace(gen, 2, 2, {self.width-2, self.height-2})
+	self:genSpace(level, 2, 2, {self.width-2, self.height-2})
 
 
 end
