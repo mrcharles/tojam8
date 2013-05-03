@@ -38,16 +38,16 @@ local spacedesc = {
 local ruleset = {
 	lobby = {
 		gen = {
-			split = { "wall", {1} },
-			spaces = {
-				{
-					type = "entrance",
-					minsize = 0.4,
-					maxsize = 0.8,			
-				},
-				gen = {
-					split = { "hall", {1, 2} }
-				}
+			widthrange = {2,10},
+			heightrange = {2,10},
+			requiredrooms = {
+				"entrance",
+				"elevator",
+			},
+			rooms = {
+				"mail",
+				"garbage",
+				"office",
 			}
 		}
 
@@ -94,34 +94,67 @@ function Floor:stampSpace(type, x, y, size)
 	end
 end
 
-function Floor:genSpace(gen, x, y, size )
+function Floor:genSpace(gen, startx, starty, size )
 
-	local newspaces = {}
-	if gen.split then -- subdivide
-		local spaces = gen.spaces
-		if gen.split[1] == "wall" then
-			for i=1,math.random(unpack(gen.split[2])) do
-				if spaces[i] then -- guaranteed room
-					print("doing space",i)
-					local s1, s2 = sizeIndexers()
-					local min,max = math.floor(spaces[i].minsize * size[s1]) or 1, math.floor(spaces[i].maxsize * (size[s1]-1)) or size[s1]-1
+	local done = false
 
-					local newsize = {}
-					newsize[s1] = math.random(min,max)
-					newsize[s2] = size[s2]
+	local rooms = {}
 
-					self:stampSpace(spaces[i].type, x, y, newsize)
+	local x, y = startx,starty
+	--horiz lines first
+	while not done do
+		local height = math.random(unpack(gen.heightrange))
+		print(height)
+		if y + height + 2 < starty + size[2] then
+			
 
-					--now bordering wall
-					if s1 == 2 then -- horiz wall
-						self:stampSpace("wall", x, y + newsize[2], { newsize[1], 1} )
-					else
-						self:stampSpace("wall", x + newsize[1], y, { 1, newsize[2]} )
-					end
-				end
-			end
+			self:stampSpace("wall", x, y + height, { size[2], 1 })
+			y = y + height + 1
+		else
+			done = true
 		end
 	end
+
+	done = false
+	x,y = startx,starty
+	--vert lines second
+	while not done do
+		local width = math.random(unpack(gen.widthrange))
+
+		if x + width + 2 < startx + size[1] then
+			self:stampSpace("wall", x + width, y, { 1, size[1] })
+			x = x + width + 1
+		else
+			done = true
+		end
+	end
+
+	-- local newspaces = {}
+	-- if gen.split then -- subdivide
+	-- 	local spaces = gen.spaces
+	-- 	if gen.split[1] == "wall" then
+	-- 		for i=1,math.random(unpack(gen.split[2])) do
+	-- 			if spaces[i] then -- guaranteed room
+	-- 				print("doing space",i)
+	-- 				local s1, s2 = sizeIndexers()
+	-- 				local min,max = math.floor(spaces[i].minsize * size[s1]) or 1, math.floor(spaces[i].maxsize * (size[s1]-1)) or size[s1]-1
+
+	-- 				local newsize = {}
+	-- 				newsize[s1] = math.random(min,max)
+	-- 				newsize[s2] = size[s2]
+
+	-- 				self:stampSpace(spaces[i].type, x, y, newsize)
+
+	-- 				--now bordering wall
+	-- 				if s1 == 2 then -- horiz wall
+	-- 					self:stampSpace("wall", x, y + newsize[2], { newsize[1], 1} )
+	-- 				else
+	-- 					self:stampSpace("wall", x + newsize[1], y, { 1, newsize[2]} )
+	-- 				end
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function Floor:generate()
