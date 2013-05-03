@@ -23,6 +23,7 @@ end
 
 function Building:getFloorWorld(floor)
 	local world = self.worlds[floor] or World:new(self.floors[floor], 32)
+	world.building = self
 
 	self.worlds[floor] = world
 

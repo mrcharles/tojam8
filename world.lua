@@ -10,15 +10,20 @@ local function on_collide(dt, shape_a, shape_b, dx, dy)
 	end
 end
 
+local function on_separate(dt, shape_a, shape_b, dx, dy)
+
+end
+
 local World = Tools:Class()
 
 
 function World:init(level, tilesize)
-    self.Collider = HC(100, on_collide)
+    self.Collider = HC(100, on_collide, on_separate)
     self.parts = {}
     self.entities = {}
     self.camera = Camera()
     
+    self.activeCollisionEvents = {}
 
     local w = love.graphics.getWidth()
     local h = love.graphics.getHeight()
@@ -101,6 +106,9 @@ function World:update(dt)
 	    if bounds then
 	    	cam.x = clamp(bounds.minx, bounds.maxx, self.focus.pos.x)
 	    	cam.y = clamp(bounds.miny, bounds.maxy, self.focus.pos.y)
+	    else
+	    	cam.x = self.focus.pos.x
+	    	cam.y = self.focus.pos.y
 	    end
 	end
 

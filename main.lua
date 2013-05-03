@@ -4,7 +4,7 @@ local Tools = require 'fabricate.tools'
 local Map = require 'fabricate.map'
 local Button = require "fabricate.button"
 local Building = require 'building'
-local Entity = require 'entity'
+local Player = require 'player'
 
 local title = Gamestate.new()
 local game = Gamestate.new()
@@ -58,11 +58,14 @@ end
 function game:enter()
 	self.building = Building:new(16,16, 1, "office")
 	self.world = self.building:getFloorWorld(1)
-	self.player = Entity:new()
+	self.player = Player:new()
+
 
 	self.world:addEntity(self.player, {-15,-15, 30,30})
 
 	self.player:setPos(100,100)
+
+	self.world:setFocus(self.player)
 end
 
 function game:update(dt)
