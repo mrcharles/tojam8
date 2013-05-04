@@ -15,7 +15,7 @@ function Building:init(width, height, floors, type)
 	for i=1,floors do
 		local metatype = (i == 1 and "lobby") or (i == floors and "ceo") or metatypes[ math.random(#metatypes) ]
 		print(width,height,metatype,type)
-		table.insert(self.floors, Floor:new(width, height, metatype, type) )		
+		table.insert(self.floors, Floor:new(width, height, metatype, type, i, floors) )		
 	end	
 	self.worlds = {}
 	return self

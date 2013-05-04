@@ -26,7 +26,6 @@ local function on_separate(dt, shape_a, shape_b, dx, dy)
 	local entity = shape_a.entity
 
 	if gob and entity then 
-		print(dx,dy)
 		gob:onCollideEnd(entity)	
 	end
 end
@@ -35,6 +34,7 @@ local World = Tools:Class()
 
 local GameObjectsClasses = {
 	StairsUp = require 'gameobjects.stairsup',
+	StairsDown = require 'gameobjects.stairsdown',
 }
 
 function World:init(level, tilesize)
@@ -68,6 +68,14 @@ function World:init(level, tilesize)
     self.level = level
     level.map:iterate(addTile)
 	return self
+end
+
+function World:leave()
+	--cleanup on exit
+	for i,gob in ipairs(self.gameobjects) do
+		gob.activeCollisions = {}
+	end
+
 end
 
 function World:addRectangle(t,l,w,h,tile)

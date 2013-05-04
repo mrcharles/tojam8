@@ -57,6 +57,7 @@ end
 
 function game:leaveFloor()
 	self.world:removeEntity(self.player)
+	self.world:leave()
 	self.world = nil
 end
 
@@ -78,7 +79,7 @@ function game:enterFloor(level)
 end
 
 function game:enter(prev)
-	self.building = Building:new(24,24, 2, "office")
+	self.building = Building:new(24,24, 3, "office")
 	self.player = Player:new()
 
 	self:enterFloor(1)

@@ -226,7 +226,7 @@ local levels = {
 	}
 }
 
-function Floor:init(width,height,metatype,type)
+function Floor:init(width,height,metatype,type, buildinglevel, maxlevel)
 	self.map = Map:new(width,height)
 
 	self.type = type
@@ -242,7 +242,7 @@ function Floor:init(width,height,metatype,type)
 	self:stampSpace("outerwall", 1, height, { width, 1 }) -- bottom wall
 
 
-	self:generate()
+	self:generate(buildinglevel, maxlevel)
 
 	return self
 end
@@ -399,21 +399,21 @@ function Floor:genSpace(gen, startx, starty, range )
 
 end
 
-function Floor:generate()
+function Floor:generate(buildinglevel,maxlevel)
 	local level = assert(levels[self.metatype], string.format("no level found for metatype '%s'",self.metatype))
 	
 
 	--just gen the non-outer wall space
 	self:genSpace(level, 2, 2, {self.width-2, self.height-2})
 
-	self:populateRooms()
+	self:populateRooms(buildinglevel,maxlevel)
 
 end
 
-function Floor:populateRooms()
+function Floor:populateRooms(buildinglevel,maxlevel)
 
 	for i,room in ipairs(self.rooms) do
-		room:populate()
+		room:populate(buildinglevel,maxlevel)
 	end
 end
 

@@ -9,6 +9,11 @@ local objects = {
 		color = {30,30,30},
 		class = "StairsUp",
 	},
+	stairsDown = {
+		walkable = true,
+		color = {80,30,30},
+		class = "StairsDown",
+	},
 	plant = {
 		walkable = false,
 		color = {0,255,0},
@@ -17,7 +22,7 @@ local objects = {
 
 local descs = {
 	elevator = {
-		requiredObjects = {"stairsUp"},
+		requiredObjects = {"stairsUp", "stairsDown"},
 		clutterDensity = 0.1,
 		clutter = {"plant"},
 		--uniqueObjects = {"thing"},
@@ -39,8 +44,8 @@ end
 function Room:placeObject(obj, required)
 
 	local map = self.map
-	local objdesc = objects[obj]
 
+	local objdesc = objects[obj]
 	if objdesc == nil then
 		print("trying to place nonexistent object:", obj)
 		return
@@ -83,7 +88,21 @@ function Room:placeObject(obj, required)
 	return placed
 end
 
-function Room:populate()
+function Room:validateObject(obj, level, maxlevel)
+	if obj == "stairsUp" then
+		if level == maxlevel then
+			return false
+		end
+	elseif obj == "stairsDown" then
+		if level == 1 then
+			return false
+		end
+	end
+
+	return true
+end
+
+function Room:populate(level, maxlevel)
 	local desc = descs[self.type]
 
 	if desc then
@@ -92,14 +111,16 @@ function Room:populate()
 
 		if desc.requiredObjects then
 			for i,obj in ipairs(desc.requiredObjects) do
-				self:placeObject(obj, true)
-				count = count + 1
+				if self:validateObject(obj,level,maxlevel) then
+					self:placeObject(obj, true)
+					count = count + 1
+				end
 			end
 		end
 
 		while count < max do
 			local obj = desc.clutter[ math.random(#desc.clutter) ]
-			if self:placeObject(obj) then
+			if self:validateObject(obj,level,maxlevel) and self:placeObject(obj) then
 				count = count + 1
 			end
 		end
