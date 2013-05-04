@@ -78,7 +78,7 @@ function game:enterFloor(level)
 end
 
 function game:enter(prev)
-	self.building = Building:new(24,24, 1, "office")
+	self.building = Building:new(24,24, 2, "office")
 	self.player = Player:new()
 
 	self:enterFloor(1)

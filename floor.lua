@@ -47,6 +47,22 @@ local spacedesc = {
 		walkable = true,
 		color = {128, 128, 0}
 	},
+	office = {
+		walkable = true,
+		color = {128, 128, 128}
+	},
+	printer = {
+		walkable = true,
+		color = {128, 128, 255}
+	},
+	breakroom = {
+		walkable = true,
+		color = {128, 255, 128}
+	},
+	manager = {
+		walkable = true,
+		color = {255, 255, 192}
+	},
 	door = {
 		door = true,
 		walkable = true, 
@@ -88,12 +104,85 @@ local levels = {
 			}
 		}
 	},
-	office = {
+	ceo = {
 		dir = "x",
+		{	
+			size = 0.2,
+			dir = "y",
+			{
+				room = "elevator",
+				size = 0.2,
+				doors = {"right"},
+			},
+			{
+				room = "office",
+				size = 0.3,
+				doors = {"right"},
+			},
+			{
+				room = "printer",
+				size = 0.2,
+				doors = {"right", "bottom"},
+			},
+			{
+				room = "breakroom",
+				doors = {"right"},
+			}
+		},
 		{
+			room = "hall",
+			size = 0.2,
+		},
+		{	
+			size = 0.2,
+			dir = "y",
+			{
+				room = "manager",
+				size = 0.3,
+				doors = {"right", "left"},
+			},
+			{
+				room = "hall",
+				size = 0.2,
+				--doors = {"right"},
+			},
+			{
+				room = "office",
+				size = 0.2,
+				doors = {"top"},
+			},
+			{
+				room = "office",
+				doors = {"right", "left"},
+			},
+		},
+		{
+			room = "hall",
+			size = 0.2,
+		},
+		{
+			dir = "y",
+			{
+				room = "office",
+				size = 0.3,
+				doors = {"left"},
+			},
+			{
+				room = "office",
+				size = 0.2,
+				doors = {"left"},
+			},
+			{
+				room = "office",
+				size = 0.2,
+				doors = {"top"},
+			},
+			{
+				room = "office",
+				doors = {"left"},
+			},
+		},
 
-
-		}
 	}
 }
 
@@ -129,12 +218,13 @@ end
 function Floor:stampSpace(type, x, y, size, dir, doors)
 	local desc = assert(spacedesc[type], string.format("unfound space type '%s'",type))
 
+	print("stamping space:",type,x,y,"size",size[1],size[2],dir)
 	local map = self.map
 	for i=x,x+size[1]-1 do
 		for j=y,y+size[2]-1 do
 			local ok = true
 			local t = map:get(i,j)
-			if t and type == "wall" and t.door then
+			if t and type == "wall" and (t.door or t.type == "hall") then
 				ok = false
 			end
 
@@ -151,6 +241,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				local x,y = x-1, y + math.random(1, size[2]-1)
 				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "right" then
+				print( size[2] )
 				local x,y = x + size[1], y + math.random(1, size[2]-1)
 				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "top" then
@@ -170,34 +261,38 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 			if y - 1 > 0 then
 				for i=1,size[1] do
 					local tile = map:get(x + i - 1, y-1)
-					if not tile.border then
+					if not tile or not tile.border then
 						map:set(x + i - 1, y-1, Tile:new(type, desc))
 					end
 				end
 			end
-			if y + 1 < map.height then
+			local dy = y + size[2]
+			if dy < map.height then
 				for i=1,size[1] do
-					local tile = map:get(x + i - 1, y+1)
-					if not tile.border then
-						map:set(x + i - 1, y+1, Tile:new(type, desc))
+					local tile = map:get(x + i - 1, dy)
+					if not tile or not tile.border then
+						map:set(x + i - 1, dy, Tile:new(type, desc))
 					end
 				end
 			end
 		elseif dir == "y" then  -- knock out edge on x
-			-- top first
+			-- left first
 			if x - 1 > 0 then
 				for i=1,size[2] do
 					local tile = map:get(x-1, y+i-1)
-					if not tile.border then
+					if not tile or not tile.border then
+						print("hall extension at",x-1,y+i-1)
 						map:set(x-1, y+i-1, Tile:new(type, desc))
 					end
 				end
 			end
-			if x + 1 < map.width then
+			local dx = x + size[1]
+			if dx < map.width then
 				for i=1,size[2] do
-					local tile = map:get(x+1, y+i-1)
-					if not tile.border then
-						map:set(x+1, y+i-1, Tile:new(type, desc))
+					local tile = map:get(dx, y+i-1)
+					if not tile or not tile.border then
+						print("hall extension at",dx,y+i-1)
+						map:set(dx, y+i-1, Tile:new(type, desc))
 					end
 				end
 			end
@@ -221,7 +316,7 @@ function Floor:genSpace(gen, startx, starty, range )
 				--stamp the room
 				self:stampSpace(space.room, x, y, { range[1], size}, "y", space.doors)
 			else
-				self:genSpace(space, x, y, { range[1], range[2]-(y-starty)})
+				self:genSpace(space, x, y, { range[1], size })
 				--self:stampSpace("garbage", x, y, { range[1], range[2]-(y-starty)})
 			end
 
@@ -242,7 +337,7 @@ function Floor:genSpace(gen, startx, starty, range )
 				--stamp the room
 				self:stampSpace(space.room, x, y, { size, range[2]}, "x", space.doors)
 			else
-				self:genSpace(space, x, y, { range[1]-(x-startx), range[2]})
+				self:genSpace(space, x, y, { size, range[2]})
 				--self:stampSpace("garbage", x, y, { range[1], range[2]-(y-starty)})
 			end
 
@@ -265,8 +360,9 @@ function Floor:genSpace(gen, startx, starty, range )
 end
 
 function Floor:generate()
-	local level = levels[self.metatype]
+	local level = assert(levels[self.metatype], string.format("no level found for metatype '%s'",self.metatype))
 	
+
 	--just gen the non-outer wall space
 	self:genSpace(level, 2, 2, {self.width-2, self.height-2})
 

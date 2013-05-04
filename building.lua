@@ -6,8 +6,8 @@ local Building = Tools:Class()
 
 local metatypes = {
 	"office",
-	"cafeteria",
-	"conference",
+	--"cafeteria",
+	--"conference",
 }
 
 function Building:init(width, height, floors, type)
