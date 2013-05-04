@@ -211,5 +211,16 @@ function tools:dict(...)
 	return d
 end
 
+local images = {}
+
+function tools:getImage(src)
+	if images[src] == nil then
+		images[src] = love.graphics.newImage(src)
+		images[src]:setFilter("nearest","nearest")
+	end
+
+	return images[src]
+end
+
 
 return tools
