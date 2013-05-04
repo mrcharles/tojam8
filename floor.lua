@@ -1,5 +1,7 @@
 local Tools = require 'fabricate.tools'
 local Map = require 'fabricate.map'
+local Room = require 'room'
+local Tile = require 'tile'
 
 local Floor = Tools:Class()
 
@@ -45,6 +47,11 @@ local spacedesc = {
 		walkable = true,
 		color = {128, 128, 0}
 	},
+	door = {
+		door = true,
+		walkable = true, 
+		color = {0,0,180}
+	}
 
 }
 
@@ -125,25 +132,26 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 			end
 
 			if ok then
-				map:set(i,j, {walkable = desc.walkable, color = desc.color, border = desc.border})
+				map:set(i,j, Tile:new(type, desc))
 			end
 		end
 	end
 
 	if doors then
+		local doordesc = spacedesc["door"]
 		for i,door in ipairs(doors) do
 			if door == "left" then
 				local x,y = x-1, y + math.random(1, size[2]-1)
-				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorl"})
+				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "right" then
 				local x,y = x + size[1], y + math.random(1, size[2]-1)
-				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorr"})
+				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "top" then
 				local x,y = x + math.random(1, size[1]-1), y - 1 
-				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorl"})
+				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "bottom" then
 				local x,y = x + math.random(1, size[1]-1), y + size[1]
-				map:set(x,y, {walkable = true, color = {0,0,180}, door = true, type = "doorr"})
+				map:set(x,y, Tile:new("door", doordesc))
 			end
 			
 		end
@@ -156,7 +164,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				for i=1,size[1] do
 					local tile = map:get(x + i - 1, y-1)
 					if not tile.border then
-						map:set(x + i - 1, y-1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+						map:set(x + i - 1, y-1, Tile:new(type, desc))
 					end
 				end
 			end
@@ -164,7 +172,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				for i=1,size[1] do
 					local tile = map:get(x + i - 1, y+1)
 					if not tile.border then
-						map:set(x + i - 1, y+1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+						map:set(x + i - 1, y+1, Tile:new(type, desc))
 					end
 				end
 			end
@@ -174,7 +182,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				for i=1,size[2] do
 					local tile = map:get(x-1, y+i-1)
 					if not tile.border then
-						map:set(x-1, y+i-1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+						map:set(x-1, y+i-1, Tile:new(type, desc))
 					end
 				end
 			end
@@ -182,7 +190,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				for i=1,size[2] do
 					local tile = map:get(x+1, y+i-1)
 					if not tile.border then
-						map:set(x+1, y+i-1, {walkable = desc.walkable, color = desc.color, border = desc.border})
+						map:set(x+1, y+i-1, Tile:new(type, desc))
 					end
 				end
 			end
@@ -192,6 +200,7 @@ end
 
 function Floor:genSpace(gen, startx, starty, range )
 
+	local map = self.map
 	local rooms = {}
 	local x,y = startx, starty
 
@@ -201,8 +210,7 @@ function Floor:genSpace(gen, startx, starty, range )
 			local size = (space.size and math.floor(range[2] * space.size)) or range[2] - (y - starty)
 
 			if space.room then
-				print("made room size", size)
-				table.insert( rooms, {x, y, range[1], size -1, type = space.room })
+				table.insert( rooms, Room:new(map, x, y, range[1], size, space.room ))
 				--stamp the room
 				self:stampSpace(space.room, x, y, { range[1], size}, "y", space.doors)
 			else
@@ -220,12 +228,10 @@ function Floor:genSpace(gen, startx, starty, range )
 		end
 	elseif gen.dir == "x" then -- across
 		for i,space in ipairs(gen) do
-			print("size input", range[1], space.size, x)
 			local size = (space.size and math.floor(range[1] * space.size)) or range[1] - (x - startx)
 
 			if space.room then
-				print("made room",space.room,"size", size)
-				table.insert( rooms, {x, y, size-1, range[2], type = space.room })
+				table.insert( rooms, Room:new(map, x, y, size, range[2], space.room ))
 				--stamp the room
 				self:stampSpace(space.room, x, y, { size, range[2]}, "x", space.doors)
 			else
@@ -244,8 +250,10 @@ function Floor:genSpace(gen, startx, starty, range )
 		end
 	end
 
-	for i,v in ipairs(rooms) do
-		print("have room:", v.type)
+	self.rooms = self.rooms or {}
+
+	for i,room in ipairs(rooms) do
+		table.insert(self.rooms, room)
 	end
 
 end
@@ -256,7 +264,15 @@ function Floor:generate()
 	--just gen the non-outer wall space
 	self:genSpace(level, 2, 2, {self.width-2, self.height-2})
 
+	self:populateRooms()
 
+end
+
+function Floor:populateRooms()
+
+	for i,room in ipairs(self.rooms) do
+		room:populate()
+	end
 end
 
 return Floor

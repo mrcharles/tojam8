@@ -61,7 +61,7 @@ function game:enter()
 	self.player = Player:new()
 
 
-	self.world:addEntity(self.player, {-15,-15, 30,30})
+	self.world:addEntity(self.player, {-10,-15, 20,30})
 
 	self.player:setPos(100,100)
 

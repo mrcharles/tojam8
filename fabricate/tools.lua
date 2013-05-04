@@ -197,5 +197,19 @@ function tools:colorGenerator()
 	end
 end
 
+function tools:dict(...)
+	local d = { values = {} }
+
+	for i,v in ipairs({...}) do
+		d.values[v] = true
+	end
+
+	function d:has(val)
+		return self.values[val]
+	end
+
+	return d
+end
+
 
 return tools
