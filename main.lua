@@ -56,7 +56,7 @@ function game:init() --called only once
 end
 
 function game:enter()
-	self.building = Building:new(16,16, 1, "office")
+	self.building = Building:new(24,24, 1, "office")
 	self.world = self.building:getFloorWorld(1)
 	self.player = Player:new()
 

@@ -22,4 +22,13 @@ function Tile:init(type, desc)
 	return self
 end
 
+function Tile:drawAt(x,y,size)
+	if self.color then
+		local x,y = (x-1) * size, (y-1) * size
+
+		love.graphics.setColor(self.color)
+		love.graphics.rectangle("fill",x,y,size,size)
+	end
+end
+
 return Tile

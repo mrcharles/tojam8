@@ -274,4 +274,14 @@ function Floor:populateRooms()
 	end
 end
 
+function Floor:draw(size)
+	function drawTile(x,y,t)
+		if t then
+			t:drawAt(x,y,size)
+		end
+	end
+
+	self.map:iterate(drawTile)
+end
+
 return Floor

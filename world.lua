@@ -4,6 +4,20 @@ local Camera = require 'hump.camera'
 HC = require 'hardoncollider'
 
 local function on_collide(dt, shape_a, shape_b, dx, dy)
+	local world = shape_b.world
+
+	if world and shape_b.collisionEvent then -- if shape_b is world then it's static most likely
+		local collisions = world.activeCollisionEvents[shape_b] or {}
+		
+		if not collisions[shape_a] then
+			collisions[shape_a] = shape_b.collisionEvent
+			world.activeCollisionEvents[shape_b] = collisions
+			--shape_a.entity:collisionEvent(shape_b.collisionEvent, shape_b)
+		end
+
+		return
+	end
+
 	if shape_a.entity then
 		local e = shape_a.entity
 		e:move(dx,dy)
@@ -11,6 +25,7 @@ local function on_collide(dt, shape_a, shape_b, dx, dy)
 end
 
 local function on_separate(dt, shape_a, shape_b, dx, dy)
+	local world = shape_a.world
 
 end
 
@@ -22,6 +37,7 @@ function World:init(level, tilesize)
     self.parts = {}
     self.entities = {}
     self.camera = Camera()
+    self.tilesize = tilesize
     
     self.activeCollisionEvents = {}
 
@@ -38,18 +54,15 @@ function World:init(level, tilesize)
 
     self.camera.x = ww/2
     self.camera.y = wh/2
-    function isNotWalkable(tile)
-    	if tile then
-    		return not tile.walkable 
-    	end
-    end
+
     function addTile(x,y,tile)
     	if tile then
     		self:addRectangle( (x-1) * tilesize, (y-1) * tilesize, tilesize, tilesize, tile)
     	end
     end
 
-    level.map:iterate(addTile)--, isNotWalkable)
+    self.level = level
+    level.map:iterate(addTile)
 	return self
 end
 
@@ -57,10 +70,15 @@ function World:addRectangle(t,l,w,h,tile)
 	local parts = self.parts
 
 	local piece
-	if not tile.walkable then
+	if not tile.walkable or tile.collisionEvent ~= nil then
 		piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h}, shape = self.Collider:addRectangle(t,l,w,h)}
 		self.Collider:setPassive(piece.shape)
 		piece.shape.world = self
+
+		if tile.collisionEvent then
+			--self.Collider:setGhost(piece.shape)
+			piece.shape.collisionEvent = tile.collisionEvent
+		end
 	else
 		piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h} }
 	end
@@ -116,13 +134,20 @@ end
 
 function World:draw()
 	self.camera:attach()
-	for i,p in ipairs(self.parts) do
-		love.graphics.setColor(p.color)
-		love.graphics[p.f](unpack(p.params))
 
-		if debugDraw and p.shape then
-			love.graphics.setColor(255,0,0)
-			p.shape:draw()
+	--draw the level
+
+	self.level:draw(self.tilesize)
+
+	if debugDraw then
+		for i,p in ipairs(self.parts) do
+			-- love.graphics.setColor(p.color)
+			-- love.graphics[p.f](unpack(p.params))
+
+			if p.shape then
+				love.graphics.setColor(255,0,0)
+				p.shape:draw()
+			end
 		end
 	end
 
