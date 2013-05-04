@@ -18,7 +18,7 @@ local objects = {
 local descs = {
 	elevator = {
 		requiredObjects = {"stairsUp"},
-		clutterDensity = 0.2,
+		clutterDensity = 0.1,
 		clutter = {"plant"},
 		--uniqueObjects = {"thing"},
 		--uniqueChance = 0.1
@@ -41,30 +41,25 @@ function Room:placeObject(obj, required)
 	local map = self.map
 	local objdesc = objects[obj]
 
-	print("room is",self.type,self.x,self.y,self.width,self.height)
-
 	if objdesc == nil then
 		print("trying to place nonexistent object:", obj)
 		return
 	end
 
 	function validator(tx,ty, tile)
-		print(tx,ty)
-		if not tile or
+		if not tile or tile.door or
 			(tx >= self.x and ty >= self.y and 
 			tx < self.x + self.width and
 			ty < self.y + self.width) then
-			print("...ok")
 			return true
 		end
 	end
 
-
-
+	local placed = false
 	while true do 
 		local x, y = self.x + math.random(self.width)-1, self.y + math.random(self.height)-1
 		local fail = false
-		print("trying to place",obj,"at",x,y)
+
 		function iterator(tx,ty, tile)
 			if tile and tile.type ~= self.type then
 				fail = true
@@ -76,6 +71,7 @@ function Room:placeObject(obj, required)
 
 		if not fail then
 			map:set(x,y, Tile:new(obj, objdesc))
+			placed = true
 			break
 		else
 			if not required then
@@ -84,7 +80,7 @@ function Room:placeObject(obj, required)
 		end
 	end
 
-
+	return placed
 end
 
 function Room:populate()
@@ -101,9 +97,12 @@ function Room:populate()
 			end
 		end
 
-		-- while count < max do
-
-		-- end
+		while count < max do
+			local obj = desc.clutter[ math.random(#desc.clutter) ]
+			if self:placeObject(obj) then
+				count = count + 1
+			end
+		end
 
 	end
 

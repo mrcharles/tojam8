@@ -243,7 +243,6 @@ function Floor:genSpace(gen, startx, starty, range )
 
 			if space.size then
 				--put a wall 
-				print("made wall space 1")
 				self:stampSpace("wall", x, y, { 1, range[2]})
 				x = x + 1
 			end
