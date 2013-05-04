@@ -22,6 +22,9 @@ function Building:init(width, height, floors, type)
 end
 
 function Building:getFloorWorld(floor)
+	if floor > #self.floors then
+		return nil
+	end
 	local world = self.worlds[floor] or World:new(self.floors[floor], 32)
 	world.building = self
 

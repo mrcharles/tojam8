@@ -104,7 +104,7 @@ local levels = {
 			}
 		}
 	},
-	ceo = {
+	office = {
 		dir = "x",
 		{	
 			size = 0.2,
@@ -183,6 +183,46 @@ local levels = {
 			},
 		},
 
+	},
+
+	ceo = {
+		dir = "y",
+		{
+			dir = "x",
+			size = 0.6,
+			{
+				room = "hall",
+				size = 0.25,
+			},
+			{
+				room = "manager",
+				size = 0.5,
+				doors = {"bottom"}
+			},
+			{
+				room = "hall"
+			}
+		},
+		{
+			size = 0.2,
+			room = "hall",
+		},
+		{
+			dir = "x",
+			{
+				room = "hall",
+				size = 0.3,
+			},
+			{
+				room = "elevator",
+				size = 0.3,
+				doors = {"right","top","left"}
+			},
+			{
+				room = "hall",
+			}
+		},
+
 	}
 }
 
@@ -248,7 +288,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				local x,y = x + math.random(1, size[1]-1), y - 1 
 				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "bottom" then
-				local x,y = x + math.random(1, size[1]-1), y + size[1]
+				local x,y = x + math.random(1, size[1]-1), y + size[2]
 				map:set(x,y, Tile:new("door", doordesc))
 			end
 			
