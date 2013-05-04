@@ -22,7 +22,16 @@ local objects = {
 	plant = {
 		walkable = false,
 		color = {0,255,0},
+	},
+	printer = {
+		walkable = false,
+		color = {50,40, 255},
+		class = "Printer"
 	}
+}
+
+local people = {
+
 }
 
 local descs = {
@@ -37,6 +46,10 @@ local descs = {
 		requiredObjects = {"playerSpawn"},
 		clutterDensity = 0.01,
 		clutter = {"plant"},
+	},
+	mail = {
+		requiredObjects = {"printer"},
+		clutterDensity = 0,
 	}
 }
 
