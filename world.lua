@@ -100,6 +100,20 @@ function World:addEntity(e, phys)
 	end
 end
 
+function World:removeEntity(e)
+	for i,entity in ipairs(self.entities) do
+		if entity == e then
+			if e.shape then
+				self.Collider:remove(e.shape)
+				e.shape.entity = nil
+				e.shape = nil
+			end
+			table.remove(self.entities,i)
+			return
+		end
+	end
+end
+
 function World:setFocus(entity)
 	self.focus = entity
 end

@@ -55,17 +55,34 @@ function game:init() --called only once
 
 end
 
-function game:enter()
-	self.building = Building:new(24,24, 1, "office")
-	self.world = self.building:getFloorWorld(1)
-	self.player = Player:new()
+function game:leaveFloor()
+	self.world:removeEntity(self.player)
+	self.world = nil
+end
 
-
+function game:enterFloor(level)
+	self.currentfloor = level
+	self.world = self.building:getFloorWorld(level)
+	self.player:setPos(0,0)
 	self.world:addEntity(self.player, {-10,-15, 20,30})
 
 	self.player:setPos(100,100)
-
 	self.world:setFocus(self.player)
+
+	self.world.changeLevel = function( world, dir )
+			self:leaveFloor()
+			self:enterFloor(self.currentfloor + dir)
+		end
+
+
+end
+
+function game:enter(prev)
+	self.building = Building:new(24,24, 1, "office")
+	self.player = Player:new()
+
+	self:enterFloor(1)
+
 end
 
 function game:update(dt)

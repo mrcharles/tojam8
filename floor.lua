@@ -87,6 +87,13 @@ local levels = {
 				doors = {"left", "top"}
 			}
 		}
+	},
+	office = {
+		dir = "x",
+		{
+
+
+		}
 	}
 }
 
