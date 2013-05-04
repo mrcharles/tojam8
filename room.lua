@@ -14,6 +14,11 @@ local objects = {
 		color = {80,30,30},
 		class = "StairsDown",
 	},
+	playerSpawn = {
+		walkable = true,
+		color = {255,0,0},
+		class = "PlayerSpawn"
+	},
 	plant = {
 		walkable = false,
 		color = {0,255,0},
@@ -27,6 +32,11 @@ local descs = {
 		clutter = {"plant"},
 		--uniqueObjects = {"thing"},
 		--uniqueChance = 0.1
+	},
+	entrance = {
+		requiredObjects = {"playerSpawn"},
+		clutterDensity = 0.01,
+		clutter = {"plant"},
 	}
 }
 

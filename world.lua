@@ -35,6 +35,7 @@ local World = Tools:Class()
 local GameObjectsClasses = {
 	StairsUp = require 'gameobjects.stairsup',
 	StairsDown = require 'gameobjects.stairsdown',
+	PlayerSpawn = require 'gameobjects.playerspawn',
 }
 
 function World:init(level, tilesize)
@@ -70,10 +71,52 @@ function World:init(level, tilesize)
 	return self
 end
 
+function World:enter(player, collision, dir)
+	self:addEntity(player, collision)
+
+	print("entering with dir ",dir)
+	--find spawn or stairs up
+
+	if dir == 0 then -- spawn
+		for i,gob in ipairs(self.gameobjects) do
+			if gob:isA(GameObjectsClasses.PlayerSpawn) then
+				local x,y = gob.shape:center()
+				player:setPos(x,y)
+				break 
+			end
+		end
+	elseif dir == 1 then -- stairsdown
+		for i,gob in ipairs(self.gameobjects) do
+			if gob:isA(GameObjectsClasses.StairsDown) then
+				local x,y = gob.shape:center()
+				player:setPos(x,y)
+				break 
+			end
+		end
+	elseif dir == -1 then -- stairsup
+		for i,gob in ipairs(self.gameobjects) do
+			if gob:isA(GameObjectsClasses.StairsUp) then
+				local x,y = gob.shape:center()
+				player:setPos(x,y)
+				break 
+			end
+		end
+	end
+
+	--pump physics
+	self.Collider:update(0.01)
+
+	for i,gob in ipairs(self.gameobjects) do
+		gob.active = true
+	end
+
+end
+
 function World:leave()
 	--cleanup on exit
 	for i,gob in ipairs(self.gameobjects) do
 		gob.activeCollisions = {}
+		gob.active = nil
 	end
 
 end
@@ -90,7 +133,7 @@ function World:addRectangle(t,l,w,h,tile)
 		if tile.class then
 			--print("tile class",tile.class)
 
-			table.insert(self.gameobjects, GameObjectsClasses[tile.class]:new(self,shape))
+			table.insert(self.gameobjects, GameObjectsClasses[tile.class]:new(self,shape, l + w/2, t + h))
 		end
 	else
 		--piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h} }

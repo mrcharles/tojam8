@@ -89,7 +89,7 @@ function tools:makeClass(super, ...)
 	super.__index = super
 
 	function super:isA(class)
-		if class == super or getmetatable(self) == super then
+		if class == super or getmetatable(self) == class then
 			return true
 		end
 	end

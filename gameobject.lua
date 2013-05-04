@@ -2,7 +2,9 @@ local Tools = require 'fabricate.tools'
 
 local GameObject = Tools:Class()
 
-function GameObject:init(world, shape)
+function GameObject:init(world, shape, x, y)
+	self.x = x
+	self.y = y
 	self.world = world
 	self.shape = shape
 	shape.gameobject = self
@@ -17,8 +19,9 @@ function GameObject:onCollideStart(other)
 	if not self.activeCollisions[other] then
 		self.activeCollisions[other] = true
 		if self.handleTouch then
-			print("touch")
-			self:handleTouch(other)
+			if self.active then
+				self:handleTouch(other)
+			end
 		end
 	end
 end

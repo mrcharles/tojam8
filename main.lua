@@ -61,18 +61,19 @@ function game:leaveFloor()
 	self.world = nil
 end
 
-function game:enterFloor(level)
+function game:enterFloor(level, dir)
 	self.currentfloor = level
 	self.world = self.building:getFloorWorld(level)
 	self.player:setPos(0,0)
-	self.world:addEntity(self.player, {-10,-15, 20,30})
+	print("dir",dir)
+	self.world:enter(self.player, {-10,-15, 20,30}, dir)
 
-	self.player:setPos(100,100)
+
 	self.world:setFocus(self.player)
 
 	self.world.changeLevel = function( world, dir )
 			self:leaveFloor()
-			self:enterFloor(self.currentfloor + dir)
+			self:enterFloor(self.currentfloor + dir, dir)
 		end
 
 
@@ -82,7 +83,7 @@ function game:enter(prev)
 	self.building = Building:new(24,24, 3, "office")
 	self.player = Player:new()
 
-	self:enterFloor(1)
+	self:enterFloor(1, 0)
 
 end
 

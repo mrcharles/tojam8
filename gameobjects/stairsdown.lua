@@ -4,10 +4,10 @@ local GameObject = require 'gameobject'
 
 local StairsDown = Tools:Class(GameObject)
 
-function StairsDown:init(world, shape)
-	GameObject.init(self,world,shape)
+function StairsDown:init(world, shape, x, y)
+	GameObject.init(self,world,shape,x,y)
 
-	self.resolves = true
+	self.resolves = false
 
 	return self
 end
