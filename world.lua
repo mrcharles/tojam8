@@ -4,33 +4,38 @@ local Camera = require 'hump.camera'
 HC = require 'hardoncollider'
 
 local function on_collide(dt, shape_a, shape_b, dx, dy)
-	local world = shape_b.world
+	local gob = shape_b.gameobject
+	local entity = shape_a.entity
 
-	if world and shape_b.collisionEvent then -- if shape_b is world then it's static most likely
-		local collisions = world.activeCollisionEvents[shape_b] or {}
-		
-		if not collisions[shape_a] then
-			collisions[shape_a] = shape_b.collisionEvent
-			world.activeCollisionEvents[shape_b] = collisions
-			--shape_a.entity:collisionEvent(shape_b.collisionEvent, shape_b)
+	if gob and entity then 
+
+		gob:onCollideStart(entity)
+
+		if not gob.resolves then
+			return
 		end
-
-		return
 	end
 
-	if shape_a.entity then
-		local e = shape_a.entity
-		e:move(dx,dy)
+	if entity then
+		entity:move(dx,dy)
 	end
 end
 
 local function on_separate(dt, shape_a, shape_b, dx, dy)
-	local world = shape_a.world
+	local gob = shape_b.gameobject
+	local entity = shape_a.entity
 
+	if gob and entity then 
+		print(dx,dy)
+		gob:onCollideEnd(entity)	
+	end
 end
 
 local World = Tools:Class()
 
+local GameObjectsClasses = {
+	StairsUp = require 'gameobjects.stairsup',
+}
 
 function World:init(level, tilesize)
     self.Collider = HC(100, on_collide, on_separate)
@@ -38,9 +43,8 @@ function World:init(level, tilesize)
     self.entities = {}
     self.camera = Camera()
     self.tilesize = tilesize
+    self.gameobjects = {}
     
-    self.activeCollisionEvents = {}
-
     local w = love.graphics.getWidth()
     local h = love.graphics.getHeight()
 
@@ -69,21 +73,20 @@ end
 function World:addRectangle(t,l,w,h,tile)
 	local parts = self.parts
 
-	local piece
-	if not tile.walkable or tile.collisionEvent ~= nil then
-		piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h}, shape = self.Collider:addRectangle(t,l,w,h)}
-		self.Collider:setPassive(piece.shape)
-		piece.shape.world = self
+	if not tile.walkable or tile.class ~= nil then
+		local shape = self.Collider:addRectangle(t,l,w,h)
 
-		if tile.collisionEvent then
-			--self.Collider:setGhost(piece.shape)
-			piece.shape.collisionEvent = tile.collisionEvent
+		self.Collider:setPassive(shape)
+		--shape.world = self
+		table.insert(parts, shape)
+		if tile.class then
+			--print("tile class",tile.class)
+
+			table.insert(self.gameobjects, GameObjectsClasses[tile.class]:new(self,shape))
 		end
 	else
-		piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h} }
+		--piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h} }
 	end
-
-	table.insert( parts, piece)
 end
 
 function World:addEntity(e, phys)
@@ -144,10 +147,8 @@ function World:draw()
 			-- love.graphics.setColor(p.color)
 			-- love.graphics[p.f](unpack(p.params))
 
-			if p.shape then
 				love.graphics.setColor(255,0,0)
-				p.shape:draw()
-			end
+				p:draw()
 		end
 	end
 

@@ -7,7 +7,7 @@ local objects = {
 	stairsUp = {
 		walkable = true,
 		color = {30,30,30},
-		collisionEvent = "stairsUp",
+		class = "StairsUp",
 	},
 	plant = {
 		walkable = false,
