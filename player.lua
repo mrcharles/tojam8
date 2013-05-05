@@ -14,7 +14,9 @@ function Player:init()
 	self.causesCollisionEvents = true
 
 	self.sprite = PaletteSprite:new("player.sprite", "idle_right")
-	self.sprite.effect:setPaletteIndex(5)
+
+	self.paletteIndex = math.random(8) - 1
+	self.sprite.effect:setPaletteIndex(self.paletteIndex)
 
 	return self
 
@@ -57,10 +59,7 @@ end
 function Player:draw()
 	love.graphics.push()
 	Base.preDraw(self)
-
 	self.sprite:draw()
-	love.graphics.setPixelEffect()
-
 	love.graphics.pop()
 end
 

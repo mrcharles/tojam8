@@ -3,6 +3,8 @@ local Map = require 'fabricate.map'
 local Room = require 'room'
 local Tile = require 'tile'
 
+local PaletteSprite = require 'PaletteSprite'
+
 local Floor = Tools:Class()
 
 local debugGen = true
@@ -244,6 +246,16 @@ function Floor:init(width,height,metatype,type, buildinglevel, maxlevel)
 
 	self:generate(buildinglevel, maxlevel)
 
+	self.paletteIndex = math.random(8) - 1
+
+	self.wallSprite = PaletteSprite:new("wallsector.sprite", "wallsector")
+	self.wallSprite.effect:setPaletteIndex(self.paletteIndex)
+	self.floorSprite = PaletteSprite:new("floorsector.sprite", "floorsector")
+	self.floorSprite.effect:setPaletteIndex(self.paletteIndex)
+
+	self.floorSprite:update(0.16)
+	self.wallSprite:update(0.16)
+
 	return self
 end
 
@@ -424,10 +436,28 @@ function Floor:populateEntities(world)
 end
 
 function Floor:draw(size)
+
 	function drawTile(x,y,t)
 		if t then
 			t:drawAt(x,y,size)
 		end
+
+		if t.type == "wall" or t.border == true then
+			self.sprite = self.wallSprite
+		else
+			self.sprite = self.floorSprite
+		end
+
+		self.sprite.effect:setPaletteIndex(self.paletteIndex)
+		self.sprite:update(0.16)
+
+		self.sprite.baseLayer.x = (x - 1) * size
+		self.sprite.baseLayer.y = (y - 1) * size
+
+		love.graphics.push()
+		self.sprite:draw()
+		love.graphics.pop()
+
 	end
 
 	self.map:iterate(drawTile)

@@ -38,6 +38,8 @@ end
 
 function PaletteSprite:update(dt)
 	self.effect:update(dt)
+	self.effect.image:setFilter("nearest", "nearest")
+	self.baseLayer.sprData.image:setFilter("nearest", "nearest")
 
 	self.baseLayer.x = self.position.x
 	self.baseLayer.y = self.position.y

@@ -16,41 +16,42 @@ function PaletteEffect:init(strData)
 		{
 			vec4 sample = Texel(tex, tc);
 
-			if(Texel(sampler, vec2(0, 0)) == sample)
+			if(sample.a == 0.0f)
+				discard;
+
+			float newIndex = index + 0.5f;
+
+			if(Texel(sampler, vec2(0.5f/16.0f, 0.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 0));
+				color = Texel(sampler, vec2(newIndex/16.0f, 0.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 1.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 1.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 1.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 1.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 2.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 2.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 2.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 2.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 3.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 3.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 3.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 3.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 4.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 4.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 4.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 4.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 5.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 5.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 5.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 5.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 6.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 6.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 6.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 6.5f/8.0f));
 			}
-			else if(Texel(sampler, vec2(0, 7.0f/8.0f)) == sample)
+			else if(Texel(sampler, vec2(0.5f/16.0f, 7.5f/8.0f)) == sample)
 			{
-				color = Texel(sampler, vec2(index/16.0f, 7.0f/8.0f));
-			}
-			else if(Texel(sampler, vec2(0, 8.0f/8.0f)) == sample)
-			{
-				color = Texel(sampler, vec2(index/16.0f, 8.0f/8.0f));
+				color = Texel(sampler, vec2(newIndex/16.0f, 7.5f/8.0f));
 			}
 			else
 			{
@@ -79,6 +80,8 @@ function PaletteEffect:init(strData)
 end
 
 function PaletteEffect:setEffect()
+	self.effect:send('index', self.index)
+	self.effect:send('sampler', self.image)
 	love.graphics.setPixelEffect(self.effect)
 end
 
@@ -90,6 +93,7 @@ t = 0
 function PaletteEffect:update(dt)
 	t = t + dt
 	self.effect:send('index', self.index)
+	self.effect:send('sampler', self.image)
 end
 
 function PaletteEffect:setPaletteIndex(index)
