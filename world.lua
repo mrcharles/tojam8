@@ -152,19 +152,19 @@ function World:leave()
 
 end
 
-function World:addRectangle(t,l,w,h,tile)
+function World:addRectangle(x,y,w,h,tile)
 	local parts = self.parts
 
 	if not tile.walkable or tile.class ~= nil then
-		local shape = self.Collider:addRectangle(t,l,w,h)
+		local shape = self.Collider:addRectangle(x,y,w,h)
 
 		self.Collider:setPassive(shape)
 		--shape.world = self
 		table.insert(parts, shape)
 		if tile.class then
 			--print("tile class",tile.class)
-
-			table.insert(self.gameobjects, GameObjectsClasses[tile.class]:new(self,shape, l + w/2, t + h))
+			print(l,t)
+			table.insert(self.gameobjects, GameObjectsClasses[tile.class]:new(self,shape, x, y))
 		end
 	else
 		--piece = { f = "rectangle", color = tile.color, params = {"fill", t,l,w,h} }
@@ -247,6 +247,12 @@ function World:draw()
 
 				love.graphics.setColor(255,0,0)
 				p:draw()
+		end
+	end
+
+	for i,gob in ipairs(self.gameobjects) do
+		if gob.draw then
+			gob:draw()
 		end
 	end
 
