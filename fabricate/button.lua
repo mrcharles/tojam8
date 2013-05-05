@@ -45,7 +45,7 @@ local function handlerelease(_, x,y)
 end
 
 function button:init(text,font,x,y,align,colors)
-	print(text, font, type(font))
+	--print(text, font, type(font))
 	assert(font)
 	self.text = text
 	self.font = font
@@ -58,6 +58,8 @@ function button:init(text,font,x,y,align,colors)
 
 	if align == "right" then
 		self.rect = Tools:rect(x, x - width, y, y + height)
+	elseif align == "left" then
+		self.rect = Tools:rect(x, x + width, y, y + height)
 	end
 
 end
@@ -114,7 +116,7 @@ function button:draw()
 	--love.graphics.scale(1 + scale)
 	local cx, cy = r:center()
 	local ox, oy = r:halfsize()
-	love.graphics.print(self.text, cx, cy, 0, 1,1, ox,oy)--r.width, self.align)
+	love.graphics.print(self.text, math.floor(cx), math.floor(cy), 0, 1,1, math.floor(ox),math.floor(oy))--r.width, self.align)
 
 end
 

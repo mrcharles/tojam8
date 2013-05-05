@@ -5,6 +5,8 @@ local Map = require 'fabricate.map'
 local Button = require "fabricate.button"
 local Building = require 'building'
 local Player = require 'player'
+local Dialog = require 'dialog'
+local QuestManager = require 'questmanager'
 
 local title = Gamestate.new()
 local game = Gamestate.new()
@@ -48,7 +50,7 @@ function title:draw()
 	love.graphics.printf("The Office Event", 50,150, 800, "left")
 
 	love.graphics.pop()
-
+	Button:draw()
 end
 
 function game:init() --called only once
@@ -88,27 +90,24 @@ function game:enter(prev)
 end
 
 function game:update(dt)
+	local player = self.player
+
 	local speed = 200
 	local player = self.player
-	if love.keyboard.isDown("a") then
-		player:move(-speed * dt, 0)
-	end
-	if love.keyboard.isDown("d") then
-		player:move(speed * dt, 0)
-	end
-	if love.keyboard.isDown("w") then
-		player:move(0, -speed * dt)
-	end
-	if love.keyboard.isDown("s") then
-		player:move(0, speed * dt)
-	end
 
+	player:setKeys(	love.keyboard.isDown("w"),
+					love.keyboard.isDown("a"),
+					love.keyboard.isDown("s"),
+					love.keyboard.isDown("d") )
 
 	self.world:update(dt)
 end
 
 function game:draw()
 	self.world:draw()
+
+	Dialog:draw()
+	Button:draw()
 end
 
 function love.load()
@@ -132,7 +131,5 @@ function love.update(dt)
 end
 
 function love.draw()
-
-	Button:draw()
 
 end

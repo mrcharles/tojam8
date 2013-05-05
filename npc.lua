@@ -16,6 +16,15 @@ end
 function NPC:logic(dt)
 	--random movement
 
+	if self.busy then return end
+
+	if self.cooldown then 
+		self.cooldown = self.cooldown - dt
+		if self.cooldown <= 0 then
+			self.cooldown = nil
+		end
+	end
+
 	if not self.movetime then
 		self.movetime = 1 + math.random() * 2
 		self.dir = Vector( math.random() * 2 - 1, math.random() * 2 - 1 )

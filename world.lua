@@ -1,6 +1,10 @@
 local Tools = require 'fabricate.tools'
 local Vector = require 'hump.vector'
 local Camera = require 'hump.camera'
+
+local Player = require 'player'
+local NPC = require 'npc'
+
 HC = require 'hardoncollider'
 
 local function on_collide(dt, shape_a, shape_b, dx, dy)
@@ -24,6 +28,23 @@ local function on_collide(dt, shape_a, shape_b, dx, dy)
 	elseif entity1 and entity2 then
 		entity1:move( dx/2, dy/2)
 		entity2:move( -dx/2, -dy/2)
+
+		local player, npc
+		if entity1:isA(Player) then
+			player = entity1
+		elseif entity2:isA(Player) then
+			player = entity2
+		end
+
+		if entity1:isA(NPC) then
+			npc = entity1
+		elseif entity2:isA(NPC) then
+			npc = entity2
+		end
+
+		if player and npc then
+			player:handleTouch(npc)
+		end
 	end
 end
 
