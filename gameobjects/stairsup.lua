@@ -1,5 +1,5 @@
 local Tools = require 'fabricate.tools'
-
+local PaletteSprite = require 'PaletteSprite'
 local GameObject = require 'gameobject'
 
 local StairsUp = Tools:Class(GameObject)
@@ -9,6 +9,8 @@ function StairsUp:init(world, shape, x, y )
 
 	self.resolves = false
 
+	self.sprite = PaletteSprite:new("specialtiles.sprite", "stairwell_up")
+
 	return self
 end
 
@@ -16,6 +18,16 @@ function StairsUp:handleTouch(other)
 	print("GOING UP!")
 	self.world:changeLevel(1)
 	--self.world:switch
+end
+
+function StairsUp:draw()
+	love.graphics.push()
+
+	love.graphics.translate(self.x, self.y)
+	self.sprite:draw()
+
+	love.graphics.pop()
+
 end
 
 return StairsUp

@@ -250,8 +250,13 @@ function World:draw()
 		end
 	end
 
-	for i,e in ipairs(self.entities) do
+	for i,e in ipairs(self.gameobjects) do
+		if e.draw ~= nil then
+			e:draw()
+		end
+	end
 
+	for i,e in ipairs(self.entities) do
 		e:draw()
 	end
 

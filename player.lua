@@ -21,7 +21,7 @@ function Player:init()
 	self.competency = 100
 
 	self.sprite = PaletteSprite:new("player.sprite", "idle_right")
-	
+
 	self.paletteIndex = math.random(8) - 1
 	self.sprite.effect:setPaletteIndex(self.paletteIndex)
 
@@ -77,9 +77,11 @@ function Player:logic(dt)
 
 	if self.moveleft then
 		self:move(-speed * dt, 0)
+		self.sprite.baseLayer.flipH = true
 	end
 	if self.moveright then
 		self:move(speed * dt, 0)
+		self.sprite.baseLayer.flipH = false
 	end
 	if self.moveup then
 		self:move(0, -speed * dt)
@@ -136,7 +138,6 @@ function Player:draw()
 
 	love.graphics.translate(0,13)
 	self.sprite:draw()
-	love.graphics.setPixelEffect()
 
 	love.graphics.pop()
 end
