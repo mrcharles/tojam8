@@ -11,8 +11,8 @@ local questions =
 		tag = "interview",
 		text = "A coworker and your boss disagree, WHO IS RIGHT?",
 		answers = {
-			{ "Coworker", "wrong"},
-			{ "Boss", "right"},
+			{ "Coworker", "wrong", "poor"},
+			{ "Boss", "right", "success"},
 			{ "You", "fired"},
 		},
 		indecision = "reprimand",
@@ -28,18 +28,24 @@ local playerFailStrings =
 	"Why am I still employed?"
 }
 
-local npcFailStrings = 
-{
-	"What a moron",
-	"Useless",
-	"Someone should fire that idiot"
-}
-
-local npcSuccessStrings = 
-{
-	"Thanks!",
-	"Good work!",
-	"Not bad"
+local npcStrings = {
+	poor = {
+		"Oof",
+		"You won't go far",
+		"Bad attitude",
+	},
+	fail = 
+	{
+		"What a moron",
+		"Useless",
+		"Someone should fire that idiot"
+	},
+	success = 
+	{
+		"Thanks!",
+		"Good work!",
+		"Not bad"
+	}
 }
 
 local mainquests = {
@@ -104,8 +110,11 @@ function QuestManager:assignQuest(player, npc)
 		return
 	end
 
-	self:askQuestion(player,npc)
-	--self:generateQuest(player,npc)
+	if math.random() < 0.3 then 
+		self:askQuestion(player,npc)
+	else
+		self:generateQuest(player,npc)
+	end
 
 end
 
@@ -116,16 +125,16 @@ function QuestManager:generateQuest(player,npc)
 
 	function onComplete()
 		self:handleResult(player, q.completeresult)
-		npc:say( npcSuccessStrings[ math.random( #npcSuccessStrings) ])
+		npc:say( npcStrings.success[ math.random( #npcStrings.success) ])
 	end
 
 	function onFail()
 		self:handleResult(player, q.failresult)
 		player:say( playerFailStrings[ math.random(#playerFailStrings)] )
-		npc:say( npcFailStrings[ math.random(#npcFailStrings)] )
+		npc:say( npcStrings.fail[ math.random(#npcStrings.fail)] )
 	end
 
-	npc.cooldown = 20
+	npc.cooldown = 10
 
 	local targets
 	if q.needspeople then
@@ -141,6 +150,13 @@ function QuestManager:generateQuest(player,npc)
 	player:addQuest( Quest:new(q.time, q.steps, targets, onComplete, onFail))
 end
 
+function QuestManager:doQuip(npc, type)
+	if type then
+		npc:say( npcStrings[type][ math.random(#npcStrings[type])] )
+	end
+end
+
+
 function QuestManager:generateQuestion(player, npc)
 	local q = questions[ math.random(#questions) ]
 
@@ -150,8 +166,10 @@ function QuestManager:generateQuestion(player, npc)
 		print("got choice",choice)
 		if choice then
 			self:handleResult(player, options[choice][2])
+			self:doQuip(npc, options[choice][3])
 		else
 			self:handleResult(player, q.indecision)
+			self:doQuip(npc, "fail")
 		end
 		player.busy = nil
 		npc.busy = nil

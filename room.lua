@@ -47,7 +47,7 @@ local descs = {
 		requiredObjects = {"playerSpawn"},
 		clutterDensity = 0.01,
 		clutter = {"plant"},
-		peopleDensity = 0.01,
+		peopleDensity = 0.03,
 		people = {"secretary", "worker"}
 	},
 	mail = {
