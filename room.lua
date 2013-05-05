@@ -89,7 +89,7 @@ local descs = {
 	},
 	garbage = {
 		clutterDensity = 0.1,
-		requireObjects = {"garbage"},
+		requiredObjects = {"garbage"},
 		clutter = {"garbage","plant"},
 		peopleDensity = 0.1,
 		people = {"janitor"},
