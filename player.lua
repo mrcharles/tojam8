@@ -132,6 +132,7 @@ function Player:draw()
 	love.graphics.push()
 	Base.preDraw(self)
 
+	love.graphics.translate(0,13)
 	self.sprite:draw()
 	love.graphics.setPixelEffect()
 
