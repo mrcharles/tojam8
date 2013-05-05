@@ -21,14 +21,10 @@ function PaletteSprite:init(strData, strAnimation)
 	self.baseLayer.strData = strData
 	self.baseLayer.animation = strAnimation
 	self.baseLayer:setData(self.baseLayer.strData, self.baseLayer.animation, true)
-	print("PaletteSprite:init()")
-	print(strAnimation)
-	--self.baseLayer.sprData.image:setFilter("nearest", "nearest")
+	self.baseLayer.sprData.image:setFilter("nearest", "nearest")
 	self.baseLayer.flipH = false
 
 	self.effect = PaletteEffect:new(strData)
-	--self.effect:init()
-	--self.effect:setPaletteIndex(5)
 	return self
 end
 
@@ -41,7 +37,7 @@ function PaletteSprite:setAnimation(animation)
 end
 
 function PaletteSprite:update(dt)
-	--LayeredSprite.effect:update(dt)
+	self.effect:update(dt)
 
 	self.baseLayer.x = self.position.x
 	self.baseLayer.y = self.position.y

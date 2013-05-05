@@ -115,6 +115,8 @@ function createSprite(strData, strAnimation)
 		love.graphics.drawq(data.image, q, self.x, self.y, self.rotation, 
 			animScale * self.scaleX, animScale * self.scaleY, 
 			offsetX, offsetY)
+
+		love.graphics.setColorMode("modulate")
 	end
 	
 	

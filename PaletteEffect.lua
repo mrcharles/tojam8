@@ -5,13 +5,6 @@ local Tools = require 'fabricate.tools'
 
 local PaletteEffect = Tools:Class()
 
---PaletteEffect = Base:new()
-
--- local path = ...
--- if type(path) ~= "string" then
--- 	path = "."
--- end
-
 function PaletteEffect:init(strData)
 	self.index = 0
 
