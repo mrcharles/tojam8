@@ -123,6 +123,17 @@ local mainquests = {
 				},
 		failresult = "slacker"
 	},
+	{
+		text = "Gotta work my ass off, and then meet the manager",
+		time = 180,
+		warn = 10,
+		needspeople = {"manager"},
+		steps = {
+					{"competency", 250, 10, "Time to brag!"},
+					{"touch", "person"}
+				},
+		failresult = "slacker"
+	},
 }
 
 local questmap = {
@@ -138,7 +149,7 @@ local quests =
 {
 	copy = {
 		text = "Go copy this form!",
-		time = 10,
+		time = 30,
 		needspeople = nil,
 		steps = {
 					{"touch", "printer"},
@@ -148,7 +159,7 @@ local quests =
 	},		
 	sendemail = {
 		text = "Go send an email!",
-		time = 10,
+		time = 15,
 		needspeople = nil,
 		steps = {
 					{"touch", "computer"},
@@ -158,7 +169,7 @@ local quests =
 	},		
 	copyreturn = {
 		text = "Go make a copy for me!",
-		time = 15,
+		time = 40,
 		needspeople = { "originator" },
 		steps = {
 					{"touch", "printer", 3, "Gotta return this."},
@@ -169,7 +180,7 @@ local quests =
 	},		
 	checkresponse = {
 		text = "Check if so and so emailed.",
-		time = 15,
+		time = 25,
 		needspeople = { "originator" },
 		steps = {
 					{"touch", "computer", 3, "Back to the micromanager"},
@@ -180,7 +191,7 @@ local quests =
 	},		
 	waterplant = {
 		text = "Go water a plant!",
-		time = 8,
+		time = 90,
 		steps = {
 					{"touch", "plant" }
 				},
@@ -189,7 +200,7 @@ local quests =
 	},		
 	throwout = {
 		text = "Throw this out!",
-		time = 30,
+		time = 60,
 		steps = {
 					{"touch", "garbage" }
 				},
@@ -198,7 +209,7 @@ local quests =
 	},		
 	resetprinter = {
 		text = "Go reset the printer!",
-		time = 10,
+		time = 15,
 		needspeople = nil,
 		steps = {
 					{"touch", "printer"},
@@ -307,12 +318,15 @@ function QuestManager:generateQuest(player,npc)
 
 	local qid = questids[math.random(#questids)]
 
-	local q = quests[qid]
-
-	if q == "question" then
+	if qid == "question" then
 		self:askQuestion(player,npc)
 		return
 	end
+
+	local q = quests[qid]
+
+
+	assert( q, string.format("failed to find a quest for class '%s' and id '%s'", npc.class, qid))
 
 	npc:say(q.text)
 

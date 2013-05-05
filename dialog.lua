@@ -5,7 +5,7 @@ local Dialog = {}
 
 local indent = 25
 local border = 5
-local height = 400
+local height = 500
 local textmargin = indent + border + 10
 local buttonspace = 50
 
