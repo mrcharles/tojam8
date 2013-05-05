@@ -2,6 +2,7 @@ local Tools = require 'fabricate.tools'
 local Entity = require 'entity'
 local QuestManager = require 'questmanager'
 
+
 local Player = Tools:Class(Entity)
 
 --	love.graphics.draw(image, 0,0,0,scale,scale,offsetx,offsety)
@@ -10,6 +11,7 @@ function Player:init()
 	Entity.init(self)
 
 	self.causesCollisionEvents = true
+	self.competency = 100
 
 	return self
 
@@ -20,6 +22,14 @@ function Player:setKeys(w,a,s,d)
 	self.moveright = d
 	self.moveup = w
 	self.movedown = s
+end
+
+function Player:changeCompetency(delta)
+	self.competency = self.competency + delta
+end
+
+function Player:getFired()
+	Gamestate.switch(gameover)
 end
 
 function Player:logic(dt)
@@ -47,8 +57,5 @@ function Player:handleTouch(other)
 		QuestManager:assignQuest(self,other)
 	end	
 end
-
-
-
 
 return Player
