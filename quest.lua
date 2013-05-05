@@ -17,7 +17,7 @@ end
 
 function Quest:testResolve(other)
 	if self.complete then return end
-	
+
 	local step = self.steps[self.currentstep]
 	if step[1] ~= "touch" then 
 		return
@@ -31,6 +31,7 @@ function Quest:testResolve(other)
 		end
 	elseif other:isA(NPC) then
 		if step[2] == "person" and self.targets and other == self.targets[1] then
+			other.questnpc = nil
 			self:completeStep()
 		end
 	end

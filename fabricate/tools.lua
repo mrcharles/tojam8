@@ -58,6 +58,16 @@ function tools:rect(x1,x2,y1,y2)
 	return rect:new(l,t,r,b)
 end
 
+function tools:arrayclone(t)
+	local o = {}
+
+	for i,v in ipairs(t) do
+		o[i] = v
+	end
+
+	return o
+end
+
 function tools:copy(t)
 	if type(t) == "table" then
 		local o = {}
@@ -230,13 +240,13 @@ function tools:getImage(src)
 	return images[src]
 end
 
-function tools:shuffle(table)
+function tools:shuffle(table,array)
 -- To shuffle an array a of n elements (indices 0..n-1):
 --   for i from n − 1 downto 1 do
 --        j ← random integer with 0 ≤ j ≤ i
 --        exchange a[j] and a[i]
 
-	local out = self:copy(table)
+	local out = (array and self:arrayclone(table)) or self:copy(table,depth)
 
 	local size = #out
 	for i=size,1,-1 do

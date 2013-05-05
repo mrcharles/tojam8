@@ -1,6 +1,7 @@
 local Tools = require 'fabricate.tools'
 local Dialog = require 'dialog'
 local Quest = require 'quest'
+local NPC = require 'npc'
 
 local QuestManager = Tools:Class()
 
@@ -18,6 +19,13 @@ local questions =
 		indecision = "reprimand",
 	},
 
+}
+
+local playerMainStrings = 
+{
+	"Movin' up in the world",
+	"Time to hit the stairs",
+	"I'm blowing this joint"
 }
 
 local playerFailStrings = 
@@ -49,7 +57,15 @@ local npcStrings = {
 }
 
 local mainquests = {
-	lobby = {
+	{
+		text = "Gotta introduce myself to the secretary",
+		time = 30,
+		warn = 10,
+		needspeople = {"secretary"},
+		steps = {
+					{"touch", "person"}
+				},
+		failresult = "failbegin"
 
 	},
 }
@@ -89,13 +105,16 @@ local results =
 		"changeCompetency", {-10}
 	},
 	fired = {
-		"getFired"
+		"getFired", {"You're Fired!"}
 	},
 	reprimand = {
 		"changeCompetency", {15}
 	},
 	failquest = {
 		"changeCompetency", {-10},
+	},
+	failbegin = {
+		"getFired", {"Failed at your first task."}
 	}
 
 }
@@ -117,6 +136,52 @@ function QuestManager:assignQuest(player, npc)
 	end
 
 end
+
+function QuestManager:mainQuest(level, player)
+	local q = mainquests[ level ]
+	if not q then return end
+
+	player:say(q.text)
+
+	function onComplete()
+		self:handleResult(player, q.completeresult)
+		player:say( playerMainStrings[ math.random( #playerMainStrings) ], 3)
+		player.level = player.level + 1
+	end
+
+	function onFail()
+		self:handleResult(player, q.failresult)
+		-- player:say( playerFailStrings[ math.random(#playerFailStrings)] )
+		-- npc:say( npcStrings.fail[ math.random(#npcStrings.fail)] )
+	end
+
+	local targets
+	if q.needspeople then
+		targets = {}
+
+		for i,person in ipairs(q.needspeople) do
+			if person == "originator" then
+				table.insert(targets, npc)
+			else
+				-- find a dude that matches
+				local world = player.world
+				local entities = Tools:shuffle(world.entities, true)
+				for i,dude in ipairs(world.entities) do
+					print("want",person,"checking i",i,dude.class)
+					if dude:isA(NPC) and dude.class == person then
+						print("FOUND")
+						dude.questnpc = true
+						table.insert(targets, dude)
+						break
+					end
+				end
+			end
+		end
+	end
+
+	player:addQuest( Quest:new(q.time, q.steps, targets, onComplete, onFail), true)
+end
+
 
 function QuestManager:generateQuest(player,npc)
 	local q = quests[ math.random(#quests)]
