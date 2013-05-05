@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<polycode>	
+	<shaders>		
+		<shader type="glsl" name="CapySprite" numAreaLights="4" numSpotLights="2">		
+			<vp source="CapySprite.vert">
+				<params>		
+					<param type="Color" name="custom_uv" default="0.0 0.0 1.0 1.0"/>
+					<param type="Vector2" name="custom_size" default="1.0 1.0"/>		
+				</params>				
+			</vp>
+			<fp source="CapySprite.frag">
+				<params>
+					<param type="Number" name="shininess" default="50.0" min="2.0" max="100.0"/>
+					<param type="Color" name="diffuse_color" default="1.0 1.0 1.0 1.0"/>
+					<param type="Color" name="specular_color" default="1.0 1.0 1.0 1.0"/>
+					<param type="Color" name="ambient_color" auto="true"/>
+					<param type="Color" name="custom_color" default="1.0 1.0 1.0 1.0"/>			
+				</params>
+				<textures>
+					<texture name="diffuse"/>
+				</textures>			
+			</fp>
+		</shader>	
+	</shaders>
+	<materials>
+		<material name="CubeMaterial">
+			<shader name="CapySprite">
+				<textures>
+					<texture name="diffuse">Resources/pink_texture.png</texture>
+				</textures>
+			</shader>
+		</material>			
+		<material name="GroundMaterial">
+			<shader name="CapySprite">
+				<textures>
+					<texture name="diffuse">Resources/green_texture.png</texture>
+				</textures>
+			</shader>
+		</material>
+		<material name="SpriteMaterial">
+			<shader name="CapySprite">
+			</shader>
+		</material>						
+	</materials>
+</polycode>
