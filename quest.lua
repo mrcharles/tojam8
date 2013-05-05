@@ -1,6 +1,6 @@
 local Tools = require 'fabricate.tools'
 local GameObject = require 'gameobject'
-local NPC = require 'gameobject'
+local NPC = require 'npc'
 
 local Quest = Tools:Class()
 
@@ -22,6 +22,7 @@ function Quest:testResolve(other)
 	end
 
 	if other:isA(GameObject) then
+		print("gob")
 		if step[2] == other.type then 
 			self:completeStep()
 			return

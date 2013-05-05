@@ -89,8 +89,16 @@ function tools:makeClass(super, ...)
 	super.__index = super
 
 	function super:isA(class)
-		if class == super or getmetatable(self) == class then
+		if class == super then
 			return true
+		end
+
+		local parent = getmetatable(self) 
+		while parent ~= nil do
+			if parent == class then
+				return true
+			end
+			parent = getmetatable(parent)
 		end
 	end
 	

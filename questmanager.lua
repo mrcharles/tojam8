@@ -28,14 +28,39 @@ local playerFailStrings =
 	"Why am I still employed?"
 }
 
+local npcFailStrings = 
+{
+	"What a moron",
+	"Useless",
+	"Someone should fire that idiot"
+}
+
+local npcSuccessStrings = 
+{
+	"Thanks!",
+	"Good work!",
+	"Not bad"
+}
+
 local quests = 
 {
 	{
 		text = "Go copy this form!",
-		time = 10,
-		needspeople = 0,
+		time = 6,
+		needspeople = nil,
 		steps = {
-					{"touch", "printer", 3},
+					{"touch", "printer"},
+				},
+		--completeresult = "",
+		failresult = "failquest",
+	},		
+	{
+		text = "Go copy this form for me!",
+		time = 10,
+		needspeople = { "originator" },
+		steps = {
+					{"touch", "printer", "3"},
+					{"touch", "person"}
 				},
 		--completeresult = "",
 		failresult = "failquest",
@@ -85,16 +110,29 @@ function QuestManager:generateQuest(player,npc)
 
 	function onComplete()
 		self:handleResult(player, q.completeresult)
+		npc:say( npcSuccessStrings[ math.random( #npcSuccessStrings) ])
 	end
 
 	function onFail()
 		self:handleResult(player, q.failresult)
 		player:say( playerFailStrings[ math.random(#playerFailStrings)] )
+		npc:say( npcFailStrings[ math.random(#npcFailStrings)] )
 	end
 
 	npc.cooldown = 20
 
-	player:addQuest( Quest:new(q.time, q.steps, nil, onComplete, onFail))
+	local targets
+	if q.needspeople then
+		targets = {}
+
+		for i,person in ipairs(q.needspeople) do
+			if person == "originator" then
+				table.insert(targets, npc)
+			end
+		end
+	end
+
+	player:addQuest( Quest:new(q.time, q.steps, targets, onComplete, onFail))
 end
 
 function QuestManager:generateQuestion(player, npc)

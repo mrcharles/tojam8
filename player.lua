@@ -4,6 +4,7 @@ local Base = require 'base'
 local QuestManager = require 'questmanager'
 local PaletteSprite = require 'PaletteSprite'
 local TextBubble = require 'textbubble'
+local NPC = require 'npc'
 
 local Player = Tools:Class(Entity)
 
@@ -37,6 +38,11 @@ end
 
 function Player:changeCompetency(delta)
 	self.competency = self.competency + delta
+
+	if self.competency <= 0 then
+		self:getFired()
+	end
+
 end
 
 function Player:getFired()
@@ -113,7 +119,11 @@ function Player:logic(dt)
 end
 
 function Player:handleTouch(other)
-	if not self.busy and not other.busy then
+	for i,q in ipairs(self.quests) do
+		q:testResolve(other)
+	end
+
+	if not self.busy and other:isA(NPC) and not other.busy then
 		QuestManager:assignQuest(self,other)
 	end	
 end
