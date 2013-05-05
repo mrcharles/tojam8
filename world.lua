@@ -253,6 +253,14 @@ function World:draw()
 		e:draw()
 	end
 
+	for i,e in ipairs(self.entities) do
+
+		if e.drawWorldUI then
+			e:drawWorldUI()
+		end
+	end
+
+
 	self.camera:detach()
 end
 

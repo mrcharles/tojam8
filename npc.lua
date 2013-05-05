@@ -71,4 +71,16 @@ function NPC:draw()
 	love.graphics.pop()
 end
 
+function NPC:drawWorldUI()
+	love.graphics.push()
+	Entity.preDraw(self)
+
+	if self.bubble then
+		self.bubble:draw()
+
+	end
+
+	love.graphics.pop()
+end
+
 return NPC
