@@ -1,6 +1,7 @@
 local Tools = require 'fabricate.tools'
 local PaletteSprite = require 'PaletteSprite'
 local GameObject = require 'gameobject'
+local Player = require 'player'
 
 local StairsDown = Tools:Class(GameObject)
 
@@ -16,7 +17,9 @@ end
 
 function StairsDown:handleTouch(other)
 	print("GOING DOWN!")
-	self.world:changeLevel(-1)
+	if other:isA(Player) then
+		self.world:changeLevel(-1)
+	end
 	--self.world:switch
 end
 

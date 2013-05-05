@@ -23,6 +23,7 @@ local objects = {
 	plant = {
 		walkable = false,
 		color = {0,255,0},
+		class = "Plant"
 	},
 	printer = {
 		walkable = false,
@@ -54,7 +55,7 @@ local descs = {
 		clutter = {"plant"},
 		peopleDensity = 0.03,
 		requiredPeople = {"secretary"},
-		people = {"secretary", "worker"}
+		people = {"secretary", "janitor"}
 	},
 	mail = {
 		requiredObjects = {"printer"},

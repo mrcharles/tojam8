@@ -13,7 +13,7 @@ local game = Gamestate.new()
 
 gameover = Gamestate.new()
 
-debugDraw = true
+--debugDraw = true
  
 function title:init()
 	self.titlefont = love.graphics.newFont("assets/SpecialElite.ttf", 72)
