@@ -36,18 +36,18 @@ function Dialog:show(text, handler, timelimit, ...)
 	local i = 1
 
 	local list = {
-		"A) ",
-		"B) ",
-		"C) ",
-		"D) ",
-		"E) ",
-		"F) ",
-		"G) ",
+		"1) ",
+		"2) ",
+		"3) ",
+		"4) ",
+		"5) ",
+		"6) ",
+		"7) ",
 	}
 
 	--print(#self.options)
 	for i=1,#self.options do
-		local button = Button(list[i] .. self.options[i], self.font, textmargin + buttonindent, textmargin + buttonoffset + buttonspace * (i-1), "left", {normal = {0,0,0}, hover = {50,50,50}})
+		local button = Button(list[i] .. self.options[i], self.font, textmargin + buttonindent, textmargin + buttonoffset + buttonspace * (i-1), "left", {normal = {0,0,0}, hover = {50,50,50}}, tostring(i))
 		local option = i
 		button.pressaction = function(button)
 			self.handler(option)

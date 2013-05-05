@@ -16,6 +16,8 @@ function Quest:init(time, steps, targets, completionFunc, failFunc)
 end
 
 function Quest:testResolve(other)
+	if self.complete then return end
+	
 	local step = self.steps[self.currentstep]
 	if step[1] ~= "touch" then 
 		return

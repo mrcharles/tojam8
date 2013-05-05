@@ -19,7 +19,7 @@ function title:init()
 	self.titlefont = love.graphics.newFont("assets/SpecialElite.ttf", 72)
 	self.buttonfont = love.graphics.newFont("assets/SpecialElite.ttf", 48)
 
-	self.newgamebutton = Button("New Game", self.buttonfont, 700, 400, "right", {normal = {0,0,0}, hover = {50,50,50}})
+	self.newgamebutton = Button("New Game", self.buttonfont, 700, 400, "right", {normal = {0,0,0}, hover = {50,50,50}}, "return")
 	self.newgamebutton.pressaction = function(button)
 		Gamestate.switch(game)
 	end
@@ -129,7 +129,7 @@ function gameover:init()
 	self.titlefont = love.graphics.newFont("assets/SpecialElite.ttf", 72)
 	self.buttonfont = love.graphics.newFont("assets/SpecialElite.ttf", 48)
 
-	self.newgamebutton = Button("Well, shit.", self.buttonfont, 700, 400, "right", {normal = {0,0,0}, hover = {50,50,50}})
+	self.newgamebutton = Button("Well, shit.", self.buttonfont, 700, 400, "right", {normal = {0,0,0}, hover = {50,50,50}}, "return")
 	self.newgamebutton.pressaction = function(button)
 		Gamestate.switch(title)
 	end
@@ -165,6 +165,10 @@ function love.mousepressed(x,y,btn)
 
 
 	Button:handlepress(x,y)
+end
+
+function love.keyreleased(key)
+	Button:handlekey(key)
 end
 
 function love.mousereleased(x,y,btn)

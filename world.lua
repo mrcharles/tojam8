@@ -238,7 +238,7 @@ function World:draw()
 
 	--draw the level
 
-	self.level:draw(self.tilesize)
+	self.level:draw(self.tilesize, self)
 
 	if debugDraw then
 		for i,p in ipairs(self.parts) do
