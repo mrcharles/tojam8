@@ -10,7 +10,7 @@ data.image = love.graphics.newImage(path.."specialtiles.sprite.png")
 data.image:setFilter("nearest", "nearest")
 data.animations = {
 	stairwell_up={
-		[0]={u=34, v=0, w=32, h=32, offsetX=0, offsetY=0, duration=0.0333333},
+		[0]={u=0, v=34, w=32, h=32, offsetX=0, offsetY=0, duration=0.0333333},
 		scale=1
 	},
 	stairwell_down={
@@ -18,23 +18,31 @@ data.animations = {
 		scale=1
 	},
 	computer={
-		[0]={u=68, v=0, w=32, h=30, offsetX=0, offsetY=-2, duration=0.0333333},
+		[0]={u=34, v=0, w=32, h=30, offsetX=0, offsetY=-2, duration=0.0333333},
 		scale=1
 	},
 	printer={
-		[0]={u=0, v=34, w=28, h=28, offsetX=-2, offsetY=-4, duration=0.0333333},
+		[0]={u=68, v=0, w=28, h=28, offsetX=-2, offsetY=-4, duration=0.0333333},
 		scale=1
 	},
 	plant1={
-		[0]={u=42, v=34, w=8, h=14, offsetX=-12, offsetY=-18, duration=0.0333333},
+		[0]={u=12, v=68, w=8, h=14, offsetX=-12, offsetY=-18, duration=0.0333333},
 		scale=1
 	},
 	plant2={
-		[0]={u=52, v=34, w=8, h=14, offsetX=-12, offsetY=-18, duration=0.0333333},
+		[0]={u=22, v=68, w=8, h=14, offsetX=-12, offsetY=-18, duration=0.0333333},
 		scale=1
 	},
 	plant3={
-		[0]={u=30, v=34, w=10, h=22, offsetX=-11, offsetY=-10, duration=0.0333333},
+		[0]={u=0, v=68, w=10, h=22, offsetX=-11, offsetY=-10, duration=0.0333333},
+		scale=1
+	},
+	table={
+		[0]={u=34, v=34, w=30, h=32, offsetX=-2, offsetY=0, duration=0.0333333},
+		scale=1
+	},
+	trashcan={
+		[0]={u=98, v=0, w=20, h=30, offsetX=-6, offsetY=-2, duration=0.0333333},
 		scale=1
 	},
 }
