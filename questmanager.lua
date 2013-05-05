@@ -1,11 +1,14 @@
 local Tools = require 'fabricate.tools'
 local Dialog = require 'dialog'
+local Quest = require 'quest'
 
 local QuestManager = Tools:Class()
+
 
 local questions = 
 {
 	{
+		tag = "interview",
 		text = "A coworker and your boss disagree, WHO IS RIGHT?",
 		answers = {
 			{ "Coworker", "wrong"},
@@ -16,6 +19,29 @@ local questions =
 	},
 
 }
+
+local playerFailStrings = 
+{
+	"Oops",
+	"Botched that one",
+	"Not gonna look good",
+	"Why am I still employed?"
+}
+
+local quests = 
+{
+	{
+		text = "Go copy this form!",
+		time = 10,
+		needspeople = 0,
+		steps = {
+					{"touch", "printer", 3},
+				},
+		--completeresult = "",
+		failresult = "failquest",
+	},		
+}
+
 
 local results = 
 {
@@ -31,6 +57,9 @@ local results =
 	reprimand = {
 		"changeCompetency", {15}
 	},
+	failquest = {
+		"changeCompetency", {-10},
+	}
 
 }
 
@@ -44,8 +73,28 @@ function QuestManager:assignQuest(player, npc)
 		return
 	end
 
-	self:askQuestion(player,npc)
+	--self:askQuestion(player,npc)
+	self:generateQuest(player,npc)
 
+end
+
+function QuestManager:generateQuest(player,npc)
+	local q = quests[ math.random(#quests)]
+
+	npc:say(q.text)
+
+	function onComplete()
+		self:handleResult(player, q.completeresult)
+	end
+
+	function onFail()
+		self:handleResult(player, q.failresult)
+		player:say( playerFailStrings[ math.random(#playerFailStrings)] )
+	end
+
+	npc.cooldown = 20
+
+	player:addQuest( Quest:new(q.time, q.steps, nil, onComplete, onFail))
 end
 
 function QuestManager:generateQuestion(player, npc)
@@ -75,6 +124,8 @@ function QuestManager:generateQuestion(player, npc)
 end
 
 function QuestManager:handleResult(player, result)
+	if result == nil then return end
+
 	local action = assert(results[result], string.format("invalid result '%s'", result))
 
 	player[action[1]](player, unpack(action[2] or {}) )

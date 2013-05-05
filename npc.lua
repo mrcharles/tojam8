@@ -63,11 +63,6 @@ function NPC:draw()
 	love.graphics.setColor(0,0,255)
 	love.graphics.rectangle("fill", -10, -15, 20, 30)
 
-	if self.bubble then
-		self.bubble:draw()
-
-	end
-
 	love.graphics.pop()
 end
 

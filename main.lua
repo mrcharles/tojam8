@@ -108,6 +108,12 @@ function game:update(dt)
 					love.keyboard.isDown("s"),
 					love.keyboard.isDown("d") )
 
+	-- if love.keyboard.isDown("down") then
+	-- 	self.world.camera.zoom = self.world.camera.zoom * 0.99
+	-- elseif love.keyboard.isDown("up") then
+	-- 	self.world.camera.zoom = self.world.camera.zoom * 1.01
+	-- end
+
 	Dialog:update(dt)
 	self.world:update(dt)
 end

@@ -179,6 +179,7 @@ function World:addEntity(e, phys)
 		local x,y,w,h = unpack(phys)
 		e.shape = self.Collider:addRectangle(e.pos.x + x*scale, e.pos.y + y*scale, w*scale, h*scale)
 		e.shape.entity = e
+		e.world = self
 	end
 end
 
@@ -190,6 +191,7 @@ function World:removeEntity(e)
 				e.shape.entity = nil
 				e.shape = nil
 			end
+			e.world = nil
 			table.remove(self.entities,i)
 			return
 		end
