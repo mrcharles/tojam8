@@ -65,7 +65,8 @@ local GameObjectsClasses = {
 	PlayerSpawn = require 'gameobjects.playerspawn',
 	Printer = require 'gameobjects.printer',
 	Computer = require 'gameobjects.computer',
-	Plant = require 'gameobjects.plant'
+	Plant = require 'gameobjects.plant',
+	Garbage = require 'gameobjects.garbage',
 }
 
 function World:init(level, tilesize)

@@ -3,26 +3,30 @@ local PaletteSprite = require 'PaletteSprite'
 local GameObject = require 'gameobject'
 local Player = require 'player'
 
-local Printer = Tools:Class(GameObject)
+local Garbage = Tools:Class(GameObject)
 
-function Printer:init(world, shape, x, y)
+function Garbage:init(world, shape, x, y)
 	GameObject.init(self,world,shape, x,y )
-	self.type = "printer"
+	self.type = "garbage"
 
-	self.sprite = PaletteSprite:new("specialtiles.sprite", "printer")
+	self.sprite = PaletteSprite:new("specialtiles.sprite", "trashcan")
 	
 	return self
 end
 
-function Printer:handleTouch(other)
-	print("touched printer")
+function Garbage:handleTouch(other)
+	print("touched Garbage")
 
 	if other:isA(Player) then
 		other:handleTouch(self)
 	end
 end
 
-function Printer:draw()
+function Garbage:draw()
+	love.graphics.setColor(0,0,0)
+
+	love.graphics.rectangle("fill", self.x, self.y, 32,32)
+
 	love.graphics.push()
 
 	love.graphics.translate(self.x, self.y)
@@ -32,4 +36,4 @@ function Printer:draw()
 
 end
 
-return Printer
+return Garbage

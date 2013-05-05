@@ -34,6 +34,11 @@ local objects = {
 		walkable = false,
 		color = {0,0,0},
 		class = "Computer"
+	},
+	garbage = {
+		walkable = false,
+		color = {0,0,0},
+		class = "Garbage"
 	}
 }
 
@@ -81,6 +86,13 @@ local descs = {
 		peopleDensity = 0.01,
 		requiredPeople = {"manager"},
 		--people = {"secretary", "worker", "it"}
+	},
+	garbage = {
+		clutterDensity = 0.1,
+		requireObjects = {"garbage"},
+		clutter = {"garbage","plant"},
+		peopleDensity = 0.1,
+		people = {"janitor"},
 	}
 
 }
