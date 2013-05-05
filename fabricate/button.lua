@@ -44,13 +44,22 @@ local function handlerelease(_, x,y)
 
 end
 
-function button:init(text,font,x,y,align,colors)
+local function handlekey(_,key)
+	for i,b in ipairs(buttons) do
+		if b.key == key then
+			b:pressed()
+		end
+	end
+end
+
+function button:init(text,font,x,y,align,colors, key)
 	--print(text, font, type(font))
 	assert(font)
 	self.text = text
 	self.font = font
 	self.align = align
 	self.colors = colors
+	self.key = key
 
 	--get sizes
 	local height = font:getHeight()
@@ -126,4 +135,4 @@ local function draw()
 	end
 end
 
-return setmetatable( {new = new, handlepress = handlepress, handlerelease=handlerelease, draw = draw}, {__call = function(_, ...) return new(...) end})
+return setmetatable( {new = new, handlepress = handlepress, handlerelease=handlerelease, handlekey=handlekey, draw = draw}, {__call = function(_, ...) return new(...) end})

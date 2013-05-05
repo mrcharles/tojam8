@@ -104,8 +104,8 @@ function QuestManager:assignQuest(player, npc)
 		return
 	end
 
-	--self:askQuestion(player,npc)
-	self:generateQuest(player,npc)
+	self:askQuestion(player,npc)
+	--self:generateQuest(player,npc)
 
 end
 
