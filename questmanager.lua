@@ -389,7 +389,7 @@ function QuestManager:generateQuestion(player, npc)
 		table.insert(texts, opt[1])
 	end
 
-	return q.text, handler, 1.5, unpack(texts)
+	return q.text, handler, 2.5, unpack(texts)
 end
 
 function QuestManager:handleResult(player, result)

@@ -142,6 +142,7 @@ end
 
 function gameover:enter(_, msg)
 	love.graphics.setBackgroundColor(255,255,255)
+	self.newgamebutton:register()
 	self.msg = msg
 end
 
