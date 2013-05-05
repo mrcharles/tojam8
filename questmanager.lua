@@ -42,6 +42,12 @@ local npcSuccessStrings =
 	"Not bad"
 }
 
+local mainquests = {
+	lobby = {
+
+	},
+}
+
 local quests = 
 {
 	{

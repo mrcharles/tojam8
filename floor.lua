@@ -243,7 +243,7 @@ function Floor:init(width,height,metatype,type, buildinglevel, maxlevel)
 	self:stampSpace("outerwall", width, 1, { 1, height }) -- right wall
 	self:stampSpace("outerwall", 1, height, { width, 1 }) -- bottom wall
 
-
+	self.levelimages = {}
 	self:generate(buildinglevel, maxlevel)
 
 	self.paletteIndex = math.random(8) - 1
@@ -435,32 +435,46 @@ function Floor:populateEntities(world)
 	end
 end
 
-function Floor:draw(size)
+function Floor:draw(size, world)
 
-	function drawTile(x,y,t)
-		if t then
-			t:drawAt(x,y,size)
+	if self.levelimages[size] then
+		love.graphics.setColor(255,255,255)
+		love.graphics.draw(self.levelimages[size],0,0)
+	else
+		world.camera:detach()
+		local canvas = love.graphics.newCanvas(self.map.width * size, self.map.height * size)
+		love.graphics.setCanvas(canvas)
+		function drawTile(x,y,t)
+			if t then
+				t:drawAt(x,y,size)
+			end
+
+			if t.type == "wall" or t.border == true then
+				self.sprite = self.wallSprite
+			else
+				self.sprite = self.floorSprite
+			end
+
+			self.sprite.effect:setPaletteIndex(self.paletteIndex)
+			self.sprite:update(0.16)
+
+			self.sprite.baseLayer.x = (x - 1) * size
+			self.sprite.baseLayer.y = (y - 1) * size
+
+			--love.graphics.push()
+			self.sprite:draw()
+			--love.graphics.pop()
+
 		end
 
-		if t.type == "wall" or t.border == true then
-			self.sprite = self.wallSprite
-		else
-			self.sprite = self.floorSprite
-		end
+		self.map:iterate(drawTile)
 
-		self.sprite.effect:setPaletteIndex(self.paletteIndex)
-		self.sprite:update(0.16)
+		love.graphics.setCanvas()
 
-		self.sprite.baseLayer.x = (x - 1) * size
-		self.sprite.baseLayer.y = (y - 1) * size
 
-		love.graphics.push()
-		self.sprite:draw()
-		love.graphics.pop()
-
+		self.levelimages[size] = love.graphics.newImage(canvas:getImageData())
+		world.camera:attach()
 	end
-
-	self.map:iterate(drawTile)
 end
 
 return Floor
