@@ -1,6 +1,7 @@
 local Tools = require 'fabricate.tools'
 
 local GameObject = require 'gameobject'
+local Player = require 'player'
 
 local Printer = Tools:Class(GameObject)
 
@@ -12,7 +13,10 @@ end
 
 function Printer:handleTouch(other)
 	print("touched printer")
-	other:handleTouch(self)
+
+	if other:isA(Player) then
+		other:handleTouch(self)
+	end
 end
 
 return Printer
