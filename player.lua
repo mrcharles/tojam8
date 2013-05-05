@@ -24,6 +24,7 @@ function Player:init()
 
 	self.paletteIndex = math.random(8) - 1
 	self.sprite.effect:setPaletteIndex(self.paletteIndex)
+	self.level = 1
 
 	self.quests = {}
 
@@ -45,21 +46,28 @@ function Player:changeCompetency(delta)
 		self:getFired()
 	end
 
+	for i,q in ipairs(self.quests) do
+		q:testResolveCompetency(self.competency)
+	end
+
 end
 
-function Player:getFired()
-	Gamestate.switch(gameover, "You're Fired!")
+function Player:getFired(msg)
+	Gamestate.switch(gameover, msg or "You're Fired!")
 end
 
-function Player:addQuest(quests)
-	table.insert(self.quests, quests)
+function Player:addQuest(quest, main)
+	table.insert(self.quests, quest)
+
+	quest.main = main
+	quest.player = self
 
 	table.sort( self.quests, function(a,b) return a.timeleft > b.timeleft end)
 end
 
-function Player:say(text)
+function Player:say(text, time)
 	self.bubble = TextBubble:new(0,-25, text)
-	self.bubbletime = 1
+	self.bubbletime = time or 1
 end
 
 function Player:logic(dt)
@@ -110,21 +118,23 @@ function Player:logic(dt)
 
 	local height = questy + #self.quests * (questheight + questspace)
 
-	if height > 600 then
+	if not self.world then return end
+	if height > 300 then
 		self.zoom = 600 / height
 
 		self.world.camera.zoom = self.zoom
 	else
-		self.zoom = 1
-		self.world.camera.zoom = 1
+		self.zoom = 2
+		self.world.camera.zoom = 2
 	end
 
 	self.sprite:update(dt)
 end
 
 function Player:handleTouch(other)
+
 	for i,q in ipairs(self.quests) do
-		q:testResolve(other)
+		q:testResolveTouch(other)
 	end
 
 	if not self.busy and other:isA(NPC) and not other.busy then
@@ -162,7 +172,11 @@ function Player:drawUI()
 
 	for i,q in ipairs(self.quests) do
 		
-		love.graphics.setColor( 0, 0, 255 )
+		if not q.main then
+			love.graphics.setColor( 0, 0, 255 )
+		else
+			love.graphics.setColor( 40,255,40 )
+		end
 		love.graphics.rectangle("fill", x, y, q.timeleft * widthpersec, questheight * self.zoom) 
 
 		love.graphics.setColor( 0, 0, 0 )

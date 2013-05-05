@@ -48,6 +48,7 @@ local descs = {
 		clutterDensity = 0.01,
 		clutter = {"plant"},
 		peopleDensity = 0.03,
+		requiredPeople = {"secretary"},
 		people = {"secretary", "worker"}
 	},
 	mail = {
@@ -169,6 +170,24 @@ function Room:spawnPeople(world)
 	local count = 0
 	local max = math.floor((self.width*self.height) * desc.peopleDensity)
 	
+	if desc.requiredPeople then
+		for i,person in ipairs(desc.requiredPeople) do
+			local dude = NPC:new(person)
+
+			local x, y = self.x + math.random(self.width)-1, self.y + math.random(self.height)-1
+
+			x = x * world.tilesize
+			y = y * world.tilesize
+
+			dude:setPos(x,y)
+
+			world:addEntity(dude, {-10,-15, 20,30})
+
+			count = count + 1
+			
+		end
+	end
+
 	while count < max do 
 		local class = desc.people[ math.random(#desc.people) ]
 		local dude = NPC:new(class)

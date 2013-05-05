@@ -72,12 +72,17 @@ function game:enterFloor(level, dir)
 	print("dir",dir)
 	self.world:enter(self.player, {-10,-15, 20,30}, dir)
 
+	if self.player.level == level then -- initiate main quest
+		QuestManager:mainQuest(level, self.player)
+	end
 
 	self.world:setFocus(self.player)
 
 	self.world.changeLevel = function( world, dir )
-			self:leaveFloor()
-			self:enterFloor(self.currentfloor + dir, dir)
+			if self.currentfloor + dir <= self.player.level then
+				self:leaveFloor()
+				self:enterFloor(self.currentfloor + dir, dir)
+			end
 		end
 
 

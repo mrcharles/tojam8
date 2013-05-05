@@ -3,26 +3,30 @@ local PaletteSprite = require 'PaletteSprite'
 local GameObject = require 'gameobject'
 local Player = require 'player'
 
-local Computer = Tools:Class(GameObject)
+local Printer = Tools:Class(GameObject)
 
-function Computer:init(world, shape, x, y)
+function Printer:init(world, shape, x, y)
 	GameObject.init(self,world,shape, x,y )
 	self.type = "printer"
 
-	self.sprite = PaletteSprite:new("specialtiles.sprite", "computer")
-
+	self.sprite = PaletteSprite:new("specialtiles.sprite", "printer")
+	
 	return self
 end
 
-function Cpmputer:handleTouch(other)
-	print("touched Cpmputer")
+function Printer:handleTouch(other)
+	print("touched printer")
 
 	if other:isA(Player) then
 		other:handleTouch(self)
 	end
 end
 
-function Cpmputer:draw()
+function Printer:draw()
+	love.graphics.setColor(0,0,0)
+
+	love.graphics.rectangle("fill", self.x, self.y, 32,32)
+
 	love.graphics.push()
 
 	love.graphics.translate(self.x, self.y)
@@ -32,4 +36,4 @@ function Cpmputer:draw()
 
 end
 
-return Cpmputer
+return Printer
