@@ -2,6 +2,7 @@ local Tools = require 'fabricate.tools'
 local Vector = require 'hump.vector'
 local TextBubble = require 'textbubble'
 local Entity = require 'entity'
+local PaletteSprite = require 'PaletteSprite'
 
 local NPC = Tools:Class(Entity)
 
@@ -9,6 +10,12 @@ function NPC:init(class)
 	Entity.init(self)
 
 	self.class = class
+
+	self.randIndex = math.random(5) - 1
+	self.sprite = PaletteSprite:new("npc.sprite", "characters_000"..self.randIndex.."_Layer")
+	
+	self.paletteIndex = math.random(8) - 1
+	self.sprite.effect:setPaletteIndex(self.paletteIndex)
 
 	return self
 end
@@ -62,8 +69,12 @@ function NPC:draw()
 
 	love.graphics.setColor(0,0,255)
 	love.graphics.rectangle("fill", -10, -15, 20, 30)
+	love.graphics.translate(0,13)
+	self.sprite:draw()
 
 	love.graphics.pop()
+
+	
 end
 
 function NPC:drawWorldUI()
