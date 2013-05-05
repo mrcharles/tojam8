@@ -46,6 +46,10 @@ function Player:changeCompetency(delta)
 		self:getFired()
 	end
 
+	for i,q in ipairs(self.quests) do
+		q:testResolveCompetency(self.competency)
+	end
+
 end
 
 function Player:getFired(msg)
@@ -56,6 +60,7 @@ function Player:addQuest(quest, main)
 	table.insert(self.quests, quest)
 
 	quest.main = main
+	quest.player = self
 
 	table.sort( self.quests, function(a,b) return a.timeleft > b.timeleft end)
 end
@@ -127,7 +132,7 @@ end
 function Player:handleTouch(other)
 
 	for i,q in ipairs(self.quests) do
-		q:testResolve(other)
+		q:testResolveTouch(other)
 	end
 
 	if not self.busy and other:isA(NPC) and not other.busy then

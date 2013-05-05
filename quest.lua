@@ -15,7 +15,21 @@ function Quest:init(time, steps, targets, completionFunc, failFunc)
 	return self
 end
 
-function Quest:testResolve(other)
+function Quest:testResolveCompetency(competency)
+	if self.complete then return end
+
+	local step = self.steps[self.currentstep]
+	if step[1] ~= "competency" then 
+		return
+	end
+
+	if competency >= step[2] then
+		self:completeStep()
+	end
+
+end
+
+function Quest:testResolveTouch(other)
 	if self.complete then return end
 
 	local step = self.steps[self.currentstep]
@@ -58,6 +72,10 @@ function Quest:completeStep()
 
 	if step[3] then
 		self.timeleft = self.timeleft + step[3]
+	end
+
+	if step[4] then
+		self.player:say(step[4],3)
 	end
 
 	self.currentstep = self.currentstep + 1

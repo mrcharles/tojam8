@@ -67,13 +67,15 @@ function NPC:draw()
 	love.graphics.push()
 	Entity.preDraw(self)
 
-	if self.questnpc then 
-		love.graphics.setColor(0,255,0)
-	else
-		love.graphics.setColor(0,0,255)
+	if debugDraw then
+		if self.questnpc then 
+			love.graphics.setColor(0,255,0)
+		else
+			love.graphics.setColor(0,0,255)
+		end
+		
+		love.graphics.rectangle("fill", -10, -15, 20, 30)
 	end
-	
-	love.graphics.rectangle("fill", -10, -15, 20, 30)
 	love.graphics.translate(0,13)
 	self.sprite:draw()
 

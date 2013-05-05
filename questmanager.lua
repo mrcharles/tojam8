@@ -68,6 +68,17 @@ local mainquests = {
 		failresult = "failbegin"
 
 	},
+	{
+		text = "Gotta work my ass off, and then meet the manager",
+		time = 60,
+		warn = 10,
+		needspeople = {"secretary"},
+		steps = {
+					{"competency", 100, 10, "Time to brag!"},
+					{"touch", "manager"}
+				},
+		failresult = "slacker"
+	},
 }
 
 local quests = 
@@ -87,7 +98,7 @@ local quests =
 		time = 10,
 		needspeople = { "originator" },
 		steps = {
-					{"touch", "printer", "3"},
+					{"touch", "printer", 3, "Gotta return this."},
 					{"touch", "person"}
 				},
 		--completeresult = "",
@@ -115,6 +126,9 @@ local results =
 	},
 	failbegin = {
 		"getFired", {"Failed at your first task."}
+	},
+	slacker = {
+		"getFired", {"You useless slacker!"}
 	}
 
 }
