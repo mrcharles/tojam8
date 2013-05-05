@@ -63,6 +63,13 @@ function NPC:draw()
 	love.graphics.setColor(0,0,255)
 	love.graphics.rectangle("fill", -10, -15, 20, 30)
 
+	love.graphics.pop()
+end
+
+function NPC:drawWorldUI()
+	love.graphics.push()
+	Entity.preDraw(self)
+
 	if self.bubble then
 		self.bubble:draw()
 
