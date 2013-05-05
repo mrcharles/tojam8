@@ -20,6 +20,7 @@ function Base:setPos(x,y)
 end
 
 function Base:move(x,y)
+	self.lastmove = Vector(x,y)
 	self.pos = self.pos + Vector(x,y)
 
 	if self.shape then

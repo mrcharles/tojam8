@@ -5,19 +5,25 @@ HC = require 'hardoncollider'
 
 local function on_collide(dt, shape_a, shape_b, dx, dy)
 	local gob = shape_b.gameobject
-	local entity = shape_a.entity
+	local entity1 = shape_a.entity
+	local entity2 = shape_b.entity
 
-	if gob and entity then 
+	if gob and entity1 then 
 
-		gob:onCollideStart(entity)
+		gob:onCollideStart(entity1)
 
 		if not gob.resolves then
 			return
 		end
 	end
 
-	if entity then
-		entity:move(dx,dy)
+	if entity1 and not entity2 then
+		entity1:move(dx,dy)
+	elseif entity2 and not entity1 then
+		entity2:move(-dx,-dy)
+	elseif entity1 and entity2 then
+		entity1:move( dx/2, dy/2)
+		entity2:move( -dx/2, -dy/2)
 	end
 end
 
@@ -69,6 +75,9 @@ function World:init(level, tilesize)
 
     self.level = level
     level.map:iterate(addTile)
+
+    level:populateEntities(self)
+
 	return self
 end
 
@@ -147,7 +156,7 @@ function World:addEntity(e, phys)
 	if phys and not e.shape then
 		local scale = e.scale or 1
 		local x,y,w,h = unpack(phys)
-		e.shape = self.Collider:addRectangle(x*scale, y*scale, w*scale, h*scale)
+		e.shape = self.Collider:addRectangle(e.pos.x + x*scale, e.pos.y + y*scale, w*scale, h*scale)
 		e.shape.entity = e
 	end
 end

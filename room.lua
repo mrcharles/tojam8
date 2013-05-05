@@ -1,7 +1,8 @@
 local Tools = require 'fabricate.tools'
 local Tile = require 'tile'
-local Room = Tools:Class()
+local NPC = require 'npc'
 
+local Room = Tools:Class()
 
 local objects = {
 	stairsUp = {
@@ -46,10 +47,16 @@ local descs = {
 		requiredObjects = {"playerSpawn"},
 		clutterDensity = 0.01,
 		clutter = {"plant"},
+		peopleDensity = 0.01,
+		people = {"secretary", "worker"}
 	},
 	mail = {
 		requiredObjects = {"printer"},
 		clutterDensity = 0,
+	},
+	hall = {
+		clutterDensity = 0.1,
+		clutter = {"plant"},
 	}
 }
 
@@ -150,6 +157,34 @@ function Room:populate(level, maxlevel)
 
 	end
 
+end
+
+function Room:spawnPeople(world)
+	local desc = descs[self.type]
+
+	if not desc or not desc.peopleDensity then
+		return 
+	end
+
+	local count = 0
+	local max = math.floor((self.width*self.height) * desc.peopleDensity)
+	
+	while count < max do 
+		local class = desc.people[ math.random(#desc.people) ]
+		local dude = NPC:new(class)
+
+		local x, y = self.x + math.random(self.width)-1, self.y + math.random(self.height)-1
+
+		x = x * world.tilesize
+		y = y * world.tilesize
+
+		dude:setPos(x,y)
+
+
+		world:addEntity(dude, {-10,-15, 20,30})
+
+		count = count + 1
+	end
 end
 
 return Room

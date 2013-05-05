@@ -417,6 +417,12 @@ function Floor:populateRooms(buildinglevel,maxlevel)
 	end
 end
 
+function Floor:populateEntities(world)
+	for i,room in ipairs(self.rooms) do
+		room:spawnPeople(world)
+	end
+end
+
 function Floor:draw(size)
 	function drawTile(x,y,t)
 		if t then
