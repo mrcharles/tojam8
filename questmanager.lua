@@ -9,12 +9,56 @@ local QuestManager = Tools:Class()
 local questions = 
 {
 	{
-		tag = "interview",
 		text = "A coworker and your boss disagree, WHO IS RIGHT?",
 		answers = {
 			{ "Coworker", "wrong", "poor"},
 			{ "Boss", "right", "success"},
 			{ "You", "fired"},
+		},
+		indecision = "reprimand",
+	},
+	{
+		text = "What is a valid use of work computers?",
+		answers = {
+			{ "Streaming", "wrong", "poor"},
+			{ "Working", "right", "success"},
+			{ "Porn", "fired"},
+		},
+		indecision = "reprimand",
+	},
+	{
+		text = "Where do you eat your lunch?",
+		answers = {
+			{ "Out", "wrong", "poor"},
+			{ "At my desk", "right", "success"},
+		},
+		indecision = "reprimand",
+	},
+	{
+		text = "Are you available to work on weekends?",
+		answers = {
+			{ "No", "wrong", "poor"},
+			{ "Yes", "right", "success"},
+		},
+		indecision = "reprimand",
+	},
+	{
+		text = "What phone do you use for work?",
+		answers = {
+			{ "iPhone", "wrong", "poor"},
+			{ "Android", "wrong", "poor"},
+			{ "Blackberry", "right", "success"},
+		},
+		indecision = "reprimand",
+	},
+	{
+		text = "Which of these days can you take off?",
+		answers = {
+			{ "Christmas", "wrong", "poor"},
+			{ "New Year's", "wrong", "poor"},
+			{ "Labour Day", "fireddayoff"},
+			{ "Birthday", "wrong", "poor"},
+			{ "I work nonstop", "right", "success"},
 		},
 		indecision = "reprimand",
 	},
@@ -74,7 +118,18 @@ local mainquests = {
 		warn = 10,
 		needspeople = {"manager"},
 		steps = {
-					{"competency", 100, 10, "Time to brag!"},
+					{"competency", 150, 10, "Time to brag!"},
+					{"touch", "person"}
+				},
+		failresult = "slacker"
+	},
+	{
+		text = "Gotta work my ass off, and then meet the manager",
+		time = 180,
+		warn = 10,
+		needspeople = {"manager"},
+		steps = {
+					{"competency", 250, 10, "Time to brag!"},
 					{"touch", "person"}
 				},
 		failresult = "slacker"
@@ -82,18 +137,19 @@ local mainquests = {
 }
 
 local questmap = {
-	secretary = {"copy", "copyreturn", "waterplant"},
-	janitor = {"waterplant"},
+	secretary = {"copy", "copyreturn", "waterplant", "question"},
+	janitor = {"waterplant","throwout"},
 	worker = {"copy", "copyreturn", "sendemail"},
-	manager = {"copy", "copyreturn", "sendemail", "checkresponse"},
-	boss = {"checkresponse", "question"}
+	manager = {"sendemail", "checkresponse", "question"},
+	boss = {"checkresponse", "question"},
+	it = {"resetprinter"},
 }
 
 local quests = 
 {
 	copy = {
 		text = "Go copy this form!",
-		time = 10,
+		time = 30,
 		needspeople = nil,
 		steps = {
 					{"touch", "printer"},
@@ -101,9 +157,19 @@ local quests =
 		--completeresult = "",
 		failresult = "failquest",
 	},		
+	sendemail = {
+		text = "Go send an email!",
+		time = 15,
+		needspeople = nil,
+		steps = {
+					{"touch", "computer"},
+				},
+		--completeresult = "",
+		failresult = "failquest",
+	},		
 	copyreturn = {
 		text = "Go make a copy for me!",
-		time = 15,
+		time = 40,
 		needspeople = { "originator" },
 		steps = {
 					{"touch", "printer", 3, "Gotta return this."},
@@ -112,11 +178,41 @@ local quests =
 		--completeresult = "",
 		failresult = "failquest",
 	},		
+	checkresponse = {
+		text = "Check if so and so emailed.",
+		time = 25,
+		needspeople = { "originator" },
+		steps = {
+					{"touch", "computer", 3, "Back to the micromanager"},
+					{"touch", "person"}
+				},
+		--completeresult = "",
+		failresult = "failquest",
+	},		
 	waterplant = {
 		text = "Go water a plant!",
-		time = 8,
+		time = 90,
 		steps = {
 					{"touch", "plant" }
+				},
+		--completeresult = "",
+		failresult = "failquest",
+	},		
+	throwout = {
+		text = "Throw this out!",
+		time = 60,
+		steps = {
+					{"touch", "garbage" }
+				},
+		--completeresult = "",
+		failresult = "minorfailquest",
+	},		
+	resetprinter = {
+		text = "Go reset the printer!",
+		time = 15,
+		needspeople = nil,
+		steps = {
+					{"touch", "printer"},
 				},
 		--completeresult = "",
 		failresult = "failquest",
@@ -136,11 +232,17 @@ local results =
 	fired = {
 		"getFired", {"You're Fired!"}
 	},
+	fireddayoff = {
+		"getFired", {"Correct, you won't be working on labour day."}
+	},
 	reprimand = {
 		"changeCompetency", {15}
 	},
 	failquest = {
 		"changeCompetency", {-10},
+	},
+	minorfailquest = {
+		"changeCompetency", {-5},
 	},
 	failbegin = {
 		"getFired", {"Failed at your first task."}
@@ -161,11 +263,7 @@ function QuestManager:assignQuest(player, npc)
 		return
 	end
 
-	if math.random() < 0.3 then 
-		self:askQuestion(player,npc)
-	else
-		self:generateQuest(player,npc)
-	end
+	self:generateQuest(player,npc)
 
 end
 
@@ -220,7 +318,15 @@ function QuestManager:generateQuest(player,npc)
 
 	local qid = questids[math.random(#questids)]
 
+	if qid == "question" then
+		self:askQuestion(player,npc)
+		return
+	end
+
 	local q = quests[qid]
+
+
+	assert( q, string.format("failed to find a quest for class '%s' and id '%s'", npc.class, qid))
 
 	npc:say(q.text)
 

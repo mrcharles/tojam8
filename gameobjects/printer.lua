@@ -23,10 +23,6 @@ function Printer:handleTouch(other)
 end
 
 function Printer:draw()
-	love.graphics.setColor(0,0,0)
-
-	love.graphics.rectangle("fill", self.x, self.y, 32,32)
-
 	love.graphics.push()
 
 	love.graphics.translate(self.x, self.y)

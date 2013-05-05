@@ -9,7 +9,7 @@ local NPC = require 'npc'
 local Player = Tools:Class(Entity)
 
 local questx, questy = 20, 20
-local questheight, widthpersec = 30, 50
+local questheight, widthpersec = 30, 15
 local questspace = 10
 
 --	love.graphics.draw(image, 0,0,0,scale,scale,offsetx,offsety)
@@ -173,9 +173,9 @@ function Player:drawUI()
 	for i,q in ipairs(self.quests) do
 		
 		if not q.main then
-			love.graphics.setColor( 0, 0, 255 )
+			love.graphics.setColor( 0, 0, 255, 80 )
 		else
-			love.graphics.setColor( 40,255,40 )
+			love.graphics.setColor( 40,255,40, 80 )
 		end
 		love.graphics.rectangle("fill", x, y, q.timeleft * widthpersec, questheight * self.zoom) 
 

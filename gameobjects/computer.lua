@@ -7,7 +7,7 @@ local Printer = Tools:Class(GameObject)
 
 function Printer:init(world, shape, x, y)
 	GameObject.init(self,world,shape, x,y )
-	self.type = "printer"
+	self.type = "computer"
 
 	self.sprite = PaletteSprite:new("specialtiles.sprite", "computer")
 
@@ -15,7 +15,7 @@ function Printer:init(world, shape, x, y)
 end
 
 function Printer:handleTouch(other)
-	print("touched printer")
+	print("touched computer")
 
 	if other:isA(Player) then
 		other:handleTouch(self)

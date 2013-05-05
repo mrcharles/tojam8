@@ -3,30 +3,30 @@ local PaletteSprite = require 'PaletteSprite'
 local GameObject = require 'gameobject'
 local Player = require 'player'
 
-local Plant = Tools:Class(GameObject)
+local Garbage = Tools:Class(GameObject)
 
-function Plant:init(world, shape, x, y)
+function Garbage:init(world, shape, x, y)
 	GameObject.init(self,world,shape, x,y )
-	self.type = "plant"
+	self.type = "garbage"
 
-	local frames = {
-		"plant1",
-		"plant2",
-		"plant3"
-	}
-	self.sprite = PaletteSprite:new("specialtiles.sprite", frames[math.random(#frames)])
+	self.sprite = PaletteSprite:new("specialtiles.sprite", "trashcan")
 	
 	return self
 end
 
-function Plant:handleTouch(other)
+function Garbage:handleTouch(other)
+	print("touched Garbage")
+
 	if other:isA(Player) then
-		print('touch plant')
 		other:handleTouch(self)
 	end
 end
 
-function Plant:draw()
+function Garbage:draw()
+	love.graphics.setColor(0,0,0)
+
+	love.graphics.rectangle("fill", self.x, self.y, 32,32)
+
 	love.graphics.push()
 
 	love.graphics.translate(self.x, self.y)
@@ -36,4 +36,4 @@ function Plant:draw()
 
 end
 
-return Plant
+return Garbage

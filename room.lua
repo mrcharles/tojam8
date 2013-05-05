@@ -34,6 +34,11 @@ local objects = {
 		walkable = false,
 		color = {0,0,0},
 		class = "Computer"
+	},
+	garbage = {
+		walkable = false,
+		color = {0,0,0},
+		class = "Garbage"
 	}
 }
 
@@ -53,7 +58,7 @@ local descs = {
 		requiredObjects = {"playerSpawn"},
 		clutterDensity = 0.01,
 		clutter = {"plant"},
-		peopleDensity = 0.03,
+		peopleDensity = 0.04,
 		requiredPeople = {"secretary"},
 		people = {"secretary", "janitor"}
 	},
@@ -64,8 +69,8 @@ local descs = {
 	hall = {
 		clutterDensity = 0.1,
 		clutter = {"plant"},
-		peopleDensity = 0.01,
-		people = {"janitor"}
+		peopleDensity = 0.02,
+		people = {"janitor", "worker"}
 	},
 	office = {
 		clutterDensity = 0.1,
@@ -81,6 +86,13 @@ local descs = {
 		peopleDensity = 0.01,
 		requiredPeople = {"manager"},
 		--people = {"secretary", "worker", "it"}
+	},
+	garbage = {
+		clutterDensity = 0.1,
+		requiredObjects = {"garbage"},
+		clutter = {"garbage","plant"},
+		peopleDensity = 0.1,
+		people = {"janitor"},
 	}
 
 }
