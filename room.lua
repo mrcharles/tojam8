@@ -28,6 +28,11 @@ local objects = {
 		walkable = false,
 		color = {50,40, 255},
 		class = "Printer"
+	},
+	computer = {
+		walkable = false,
+		color = {0,0,0},
+		class = "Computer"
 	}
 }
 
@@ -58,7 +63,25 @@ local descs = {
 	hall = {
 		clutterDensity = 0.1,
 		clutter = {"plant"},
+		peopleDensity = 0.01,
+		people = {"janitor"}
+	},
+	office = {
+		clutterDensity = 0.1,
+		requiredObjects = {"computer"},
+		clutter = {"plant", "printer"},
+		peopleDensity = 0.1,
+		requiredPeople = {"worker"},
+		people = {"secretary", "worker", "it"}
+	},
+	manager = {
+		clutterDensity = 0.01,
+		clutter = {"plant", "printer", "computer"},
+		peopleDensity = 0.01,
+		requiredPeople = {"manager"},
+		--people = {"secretary", "worker", "it"}
 	}
+
 }
 
 function Room:init(map, x, y, w, h, type)

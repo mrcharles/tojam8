@@ -72,10 +72,10 @@ local mainquests = {
 		text = "Gotta work my ass off, and then meet the manager",
 		time = 60,
 		warn = 10,
-		needspeople = {"secretary"},
+		needspeople = {"manager"},
 		steps = {
 					{"competency", 100, 10, "Time to brag!"},
-					{"touch", "manager"}
+					{"touch", "person"}
 				},
 		failresult = "slacker"
 	},
