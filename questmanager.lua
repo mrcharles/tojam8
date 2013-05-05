@@ -54,10 +54,11 @@ function QuestManager:generateQuestion(player, npc)
 	local options = Tools:shuffle(q.answers)
 
 	local function handler(choice)
+		print("got choice",choice)
 		if choice then
-			self:handleResult(options[choice])
+			self:handleResult(player, options[choice][2])
 		else
-			self:handleResult(q.indecision)
+			self:handleResult(player, q.indecision)
 		end
 		player.busy = nil
 		npc.busy = nil
@@ -73,7 +74,10 @@ function QuestManager:generateQuestion(player, npc)
 	return q.text, handler, 1.5, unpack(texts)
 end
 
-function QuestManager:handleResult(result)
+function QuestManager:handleResult(player, result)
+	local action = assert(results[result], string.format("invalid result '%s'", result))
+
+	player[action[1]](player, unpack(action[2] or {}) )
 
 end
 function QuestManager:askQuestion(player, npc)

@@ -11,6 +11,8 @@ local QuestManager = require 'questmanager'
 local title = Gamestate.new()
 local game = Gamestate.new()
 
+gameover = Gamestate.new()
+
 debugDraw = true
  
 function title:init()
@@ -89,6 +91,12 @@ function game:enter(prev)
 
 end
 
+function game:leave()
+	self:leaveFloor()
+	self.building = nil
+	self.player = nil
+end
+
 function game:update(dt)
 	local player = self.player
 
@@ -108,6 +116,37 @@ function game:draw()
 	self.world:draw()
 
 	Dialog:draw()
+	Button:draw()
+end
+
+function gameover:init()
+	self.titlefont = love.graphics.newFont("assets/SpecialElite.ttf", 72)
+	self.buttonfont = love.graphics.newFont("assets/SpecialElite.ttf", 48)
+
+	self.newgamebutton = Button("Well, shit.", self.buttonfont, 700, 400, "right", {normal = {0,0,0}, hover = {50,50,50}})
+	self.newgamebutton.pressaction = function(button)
+		Gamestate.switch(title)
+	end
+end
+
+function gameover:enter(_, msg)
+	love.graphics.setBackgroundColor(255,255,255)
+	self.msg = msg
+end
+
+function gameover:leave()
+	self.newgamebutton:unregister()
+end
+
+function gameover:draw()
+	love.graphics.setColor(0,0,0)
+	love.graphics.setFont(self.titlefont)
+	love.graphics.push()
+	local jitter = 3
+	love.graphics.translate( math.random(-jitter,jitter), math.random(-jitter,jitter))
+	love.graphics.printf(self.msg, 50,150, 800, "left")
+
+	love.graphics.pop()
 	Button:draw()
 end
 

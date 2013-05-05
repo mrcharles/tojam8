@@ -29,7 +29,7 @@ function Player:changeCompetency(delta)
 end
 
 function Player:getFired()
-	Gamestate.switch(gameover)
+	Gamestate.switch(gameover, "You're Fired!")
 end
 
 function Player:logic(dt)

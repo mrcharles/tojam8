@@ -48,8 +48,11 @@ function Dialog:show(text, handler, timelimit, ...)
 	--print(#self.options)
 	for i=1,#self.options do
 		local button = Button(list[i] .. self.options[i], self.font, textmargin + buttonindent, textmargin + buttonoffset + buttonspace * (i-1), "left", {normal = {0,0,0}, hover = {50,50,50}})
+		print("wtf",i)
+		local option = i
 		button.pressaction = function(button)
-			self.handler(i)
+			print("handling fucking ",option)
+			self.handler(option)
 			self:close()
 		end
 		table.insert(self.buttons, button)
