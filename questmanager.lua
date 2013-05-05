@@ -20,6 +20,7 @@ function QuestManager:assignQuest(player, npc)
 		player.busy = false
 		npc.busy = false
 		npc.cooldown = 10
+		npc:say("You're the worst")
 	end
 
 	Dialog:show("A Problem comes up and a co worker and your boss disagree, who is right?", handler, 1.5, "Coworker", "You", "Your boss")

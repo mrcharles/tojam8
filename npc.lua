@@ -1,6 +1,6 @@
 local Tools = require 'fabricate.tools'
 local Vector = require 'hump.vector'
-
+local TextBubble = require 'textbubble'
 local Entity = require 'entity'
 
 local NPC = Tools:Class(Entity)
@@ -13,10 +13,23 @@ function NPC:init(class)
 	return self
 end
 
+function NPC:say(text)
+	self.bubble = TextBubble:new(0,-25, text)
+	self.bubbletime = 2
+end
+
 function NPC:logic(dt)
 	--random movement
 
 	if self.busy then return end
+
+	if self.bubble then
+		self.bubbletime = self.bubbletime - dt
+		if self.bubbletime <= 0 then
+			self.bubble = nil
+			self.bubbletime = nil
+		end
+	end
 
 	if self.cooldown then 
 		self.cooldown = self.cooldown - dt
@@ -49,6 +62,11 @@ function NPC:draw()
 
 	love.graphics.setColor(0,0,255)
 	love.graphics.rectangle("fill", -10, -15, 20, 30)
+
+	if self.bubble then
+		self.bubble:draw()
+
+	end
 
 	love.graphics.pop()
 end

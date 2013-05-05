@@ -17,8 +17,8 @@ function rect:new(l,t,r,b)
 	return r
 end
 
-function rect:draw(mode)
-	love.graphics.rectangle(mode or "fill", self.x, self.y, self.width, self.height)
+function rect:draw(mode, border)
+	love.graphics.rectangle(mode or "fill", self.x-border, self.y-border, self.width+border*2, self.height+border*2)
 end
 
 function rect:contains(x,y)

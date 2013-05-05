@@ -1,7 +1,7 @@
 local Tools = require 'fabricate.tools'
 local Button = require 'fabricate.button'
 
-local Dialog = Tools:Class()
+local Dialog = {}
 
 local indent = 25
 local border = 5
