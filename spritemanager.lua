@@ -115,14 +115,16 @@ function createSprite(strData, strAnimation)
 		love.graphics.drawq(data.image, q, self.x, self.y, self.rotation, 
 			animScale * self.scaleX, animScale * self.scaleY, 
 			offsetX, offsetY)
+
+		love.graphics.setColorMode("modulate")
 	end
 	
 	
 	sprite.x = 0
 	sprite.y = 0
 	
-	sprite.scaleX = 4
-	sprite.scaleY = 4
+	sprite.scaleX = 1
+	sprite.scaleY = 1
 	
 	sprite.filter = "nearest"
 	

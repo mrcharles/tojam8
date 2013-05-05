@@ -4,27 +4,27 @@ local Vector = require "hump.vector"
 --require "spritemanager"
 local PaletteEffect = require "PaletteEffect"
 
+local SpriteManager = require 'spritemanager'
+local Entity = require 'entity'
 local PaletteSprite = Tools:Class(Entity)
-
-PaletteSprite.position = Vector(0, 0)
-PaletteSprite.baseLayer = {}
-PaletteSprite.effect = {}
 
 function PaletteSprite:init(strData, strAnimation)
 	print(type(strAnimation))
-	Base.init(self)
+	Entity.init(self)
+
+
+	self.position = Vector(0, 0)
+	self.baseLayer = {}
+	self.effect = {}
+
 	self.baseLayer = SpriteManager.createSprite()
 	self.baseLayer.strData = strData
 	self.baseLayer.animation = strAnimation
 	self.baseLayer:setData(self.baseLayer.strData, self.baseLayer.animation, true)
-	print("PaletteSprite:init()")
-	print(strAnimation)
-	--self.baseLayer.sprData.image:setFilter("nearest", "nearest")
+	self.baseLayer.sprData.image:setFilter("nearest", "nearest")
 	self.baseLayer.flipH = false
 
-	self.effect = PaletteEffect:new()
-	self.effect:init(strData)
-	self.effect:setPaletteIndex(5)
+	self.effect = PaletteEffect:new(strData)
 	return self
 end
 
@@ -37,7 +37,7 @@ function PaletteSprite:setAnimation(animation)
 end
 
 function PaletteSprite:update(dt)
-	--LayeredSprite.effect:update(dt)
+	self.effect:update(dt)
 
 	self.baseLayer.x = self.position.x
 	self.baseLayer.y = self.position.y

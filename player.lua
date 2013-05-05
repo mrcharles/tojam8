@@ -1,6 +1,8 @@
 local Tools = require 'fabricate.tools'
 local Entity = require 'entity'
+local Base = require 'base'
 local QuestManager = require 'questmanager'
+local PaletteSprite = require 'PaletteSprite'
 
 
 local Player = Tools:Class(Entity)
@@ -12,6 +14,9 @@ function Player:init()
 
 	self.causesCollisionEvents = true
 	self.competency = 100
+
+	self.sprite = PaletteSprite:new("player.sprite", "idle_right")
+	self.sprite.effect:setPaletteIndex(5)
 
 	return self
 
@@ -50,12 +55,23 @@ function Player:logic(dt)
 		self:move(0, speed * dt)
 	end
 
+	self.sprite:update(dt)
 end
 
 function Player:handleTouch(other)
 	if not self.busy and not other.busy then
 		QuestManager:assignQuest(self,other)
 	end	
+end
+
+function Player:draw()
+	love.graphics.push()
+	Base.preDraw(self)
+
+	self.sprite:draw()
+	love.graphics.setPixelEffect()
+
+	love.graphics.pop()
 end
 
 return Player
