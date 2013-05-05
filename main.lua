@@ -100,6 +100,7 @@ function game:update(dt)
 					love.keyboard.isDown("s"),
 					love.keyboard.isDown("d") )
 
+	Dialog:update(dt)
 	self.world:update(dt)
 end
 

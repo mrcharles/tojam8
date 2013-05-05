@@ -22,7 +22,7 @@ function QuestManager:assignQuest(player, npc)
 		npc.cooldown = 10
 	end
 
-	Dialog:show("A Problem comes up and a co worker and your boss disagree, who is right?", handler, "Coworker", "You", "Your boss")
+	Dialog:show("A Problem comes up and a co worker and your boss disagree, who is right?", handler, 1.5, "Coworker", "You", "Your boss")
 
 end
 
