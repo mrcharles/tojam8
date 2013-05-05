@@ -9,7 +9,7 @@ function Printer:init(world, shape, x, y)
 	GameObject.init(self,world,shape, x,y )
 	self.type = "printer"
 
-	self.sprite = PaletteSprite:new("specialtiles.sprite", "printer")
+	self.sprite = PaletteSprite:new("specialtiles.sprite", "computer")
 
 	return self
 end

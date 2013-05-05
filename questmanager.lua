@@ -72,20 +72,28 @@ local mainquests = {
 		text = "Gotta work my ass off, and then meet the manager",
 		time = 60,
 		warn = 10,
-		needspeople = {"secretary"},
+		needspeople = {"manager"},
 		steps = {
 					{"competency", 100, 10, "Time to brag!"},
-					{"touch", "manager"}
+					{"touch", "person"}
 				},
 		failresult = "slacker"
 	},
 }
 
+local questmap = {
+	secretary = {"copy", "copyreturn", "waterplant"},
+	janitor = {"waterplant"},
+	worker = {"copy", "copyreturn", "sendemail"},
+	manager = {"copy", "copyreturn", "sendemail", "checkresponse"},
+	boss = {"checkresponse", "question"}
+}
+
 local quests = 
 {
-	{
+	copy = {
 		text = "Go copy this form!",
-		time = 6,
+		time = 10,
 		needspeople = nil,
 		steps = {
 					{"touch", "printer"},
@@ -93,9 +101,9 @@ local quests =
 		--completeresult = "",
 		failresult = "failquest",
 	},		
-	{
-		text = "Go copy this form for me!",
-		time = 10,
+	copyreturn = {
+		text = "Go make a copy for me!",
+		time = 15,
 		needspeople = { "originator" },
 		steps = {
 					{"touch", "printer", 3, "Gotta return this."},
@@ -104,6 +112,16 @@ local quests =
 		--completeresult = "",
 		failresult = "failquest",
 	},		
+	waterplant = {
+		text = "Go water a plant!",
+		time = 8,
+		steps = {
+					{"touch", "plant" }
+				},
+		--completeresult = "",
+		failresult = "failquest",
+	},		
+
 }
 
 
@@ -198,7 +216,11 @@ end
 
 
 function QuestManager:generateQuest(player,npc)
-	local q = quests[ math.random(#quests)]
+	local questids = questmap[ npc.class ]
+
+	local qid = questids[math.random(#questids)]
+
+	local q = quests[qid]
 
 	npc:say(q.text)
 
