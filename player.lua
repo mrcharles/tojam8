@@ -1,6 +1,8 @@
 local Tools = require 'fabricate.tools'
 local Entity = require 'entity'
+local Base = require 'base'
 local QuestManager = require 'questmanager'
+local PaletteSprite = require 'PaletteSprite'
 
 local Player = Tools:Class(Entity)
 
@@ -10,6 +12,10 @@ function Player:init()
 	Entity.init(self)
 
 	self.causesCollisionEvents = true
+
+	self.sprite = PaletteSprite:new("player.sprite", "idle_right")
+	--self.sprite:init()
+	self.sprite.effect:setPaletteIndex(5)
 
 	return self
 
@@ -48,7 +54,14 @@ function Player:handleTouch(other)
 	end	
 end
 
+function Player:draw()
+	love.graphics.push()
+	Base.preDraw(self)
 
+	self.sprite:draw()
+
+	love.graphics.pop()
+end
 
 
 return Player

@@ -121,8 +121,8 @@ function createSprite(strData, strAnimation)
 	sprite.x = 0
 	sprite.y = 0
 	
-	sprite.scaleX = 4
-	sprite.scaleY = 4
+	sprite.scaleX = 1
+	sprite.scaleY = 1
 	
 	sprite.filter = "nearest"
 	

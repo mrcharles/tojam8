@@ -1,13 +1,11 @@
-local Base = require "base"
 local Tools = require 'fabricate.tools'
 
 --require "hump.vector"
 
 
-local PaletteEffect = Tools:Class(Base)
+local PaletteEffect = Tools:Class()
 
 --PaletteEffect = Base:new()
-PaletteEffect.index = 0
 
 -- local path = ...
 -- if type(path) ~= "string" then
@@ -15,7 +13,7 @@ PaletteEffect.index = 0
 -- end
 
 function PaletteEffect:init(strData)
-	Base.init(self)
+	self.index = 0
 
 	local src = [[
 		extern number index;
@@ -77,18 +75,18 @@ function PaletteEffect:init(strData)
 	-- self.strData = strData
 	-- self.strData = self.strData .. "boo"
 
-	PaletteEffect.image = love.graphics.newImage("assets/sprites/player.sprite_palette.png")
-	PaletteEffect.image:setFilter("nearest", "nearest")
+	self.image = love.graphics.newImage("assets/sprites/".. strData .."_palette.png")
+	self.image:setFilter("nearest", "nearest")
 
-	PaletteEffect.effect = love.graphics.newPixelEffect(src)
-	PaletteEffect.effect:send('sampler', PaletteEffect.image)
-	PaletteEffect.effect:send('index', PaletteEffect.index)
+	self.effect = love.graphics.newPixelEffect(src)
+	self.effect:send('sampler', self.image)
+	self.effect:send('index', self.index)
 
 	return self
 end
 
 function PaletteEffect:setEffect()
-	love.graphics.setPixelEffect(PaletteEffect.effect)
+	love.graphics.setPixelEffect(self.effect)
 end
 
 function PaletteEffect:clearEffect()
@@ -98,11 +96,11 @@ end
 t = 0
 function PaletteEffect:update(dt)
 	t = t + dt
-	PaletteEffect.effect:send('index', PaletteEffect.index)
+	self.effect:send('index', self.index)
 end
 
 function PaletteEffect:setPaletteIndex(index)
-	PaletteEffect.index = index
+	self.index = index
 end
 
 return PaletteEffect
