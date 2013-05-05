@@ -1,5 +1,5 @@
 local Tools = require 'fabricate.tools'
-local PaletteSprite = require 'PaletteSprite'
+local PlainSprite = require 'PlainSprite'
 local GameObject = require 'gameobject'
 local Player = require 'player'
 
@@ -9,7 +9,7 @@ function Printer:init(world, shape, x, y)
 	GameObject.init(self,world,shape, x,y )
 	self.type = "printer"
 
-	self.sprite = PaletteSprite:new("specialtiles.sprite", "printer")
+	self.sprite = PlainSprite:new("specialtiles.sprite", "printer")
 	
 	return self
 end
