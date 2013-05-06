@@ -269,8 +269,9 @@ end
 
 function QuestManager:mainQuest(level, player)
 	local q = mainquests[ level ]
-	if not q then return end
+	if not q or q.assigned then return end
 
+	q.assigned = true
 	player:say(q.text)
 
 	function onComplete()
