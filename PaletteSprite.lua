@@ -9,7 +9,7 @@ local Entity = require 'entity'
 local PaletteSprite = Tools:Class(Entity)
 
 function PaletteSprite:init(strData, strAnimation)
-	print(type(strAnimation))
+--	print(type(strAnimation))
 	Entity.init(self)
 
 

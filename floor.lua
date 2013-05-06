@@ -270,7 +270,7 @@ end
 function Floor:stampSpace(type, x, y, size, dir, doors)
 	local desc = assert(spacedesc[type], string.format("unfound space type '%s'",type))
 
-	print("stamping space:",type,x,y,"size",size[1],size[2],dir)
+--	print("stamping space:",type,x,y,"size",size[1],size[2],dir)
 	local map = self.map
 	for i=x,x+size[1]-1 do
 		for j=y,y+size[2]-1 do
@@ -293,7 +293,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				local x,y = x-1, y + math.random(1, size[2]-1)
 				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "right" then
-				print( size[2] )
+--				print( size[2] )
 				local x,y = x + size[1], y + math.random(1, size[2]-1)
 				map:set(x,y, Tile:new("door", doordesc))
 			elseif door == "top" then
@@ -333,7 +333,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				for i=1,size[2] do
 					local tile = map:get(x-1, y+i-1)
 					if not tile or not tile.border then
-						print("hall extension at",x-1,y+i-1)
+--						print("hall extension at",x-1,y+i-1)
 						map:set(x-1, y+i-1, Tile:new(type, desc))
 					end
 				end
@@ -343,7 +343,7 @@ function Floor:stampSpace(type, x, y, size, dir, doors)
 				for i=1,size[2] do
 					local tile = map:get(dx, y+i-1)
 					if not tile or not tile.border then
-						print("hall extension at",dx,y+i-1)
+--						print("hall extension at",dx,y+i-1)
 						map:set(dx, y+i-1, Tile:new(type, desc))
 					end
 				end
@@ -358,7 +358,7 @@ function Floor:genSpace(gen, startx, starty, range )
 	local rooms = {}
 	local x,y = startx, starty
 
-	print("gen", startx, starty, range[1], range[2])
+--	print("gen", startx, starty, range[1], range[2])
 	if gen.dir == "y" then -- down
 		for i,space in ipairs(gen) do
 			local size = (space.size and math.floor(range[2] * space.size)) or range[2] - (y - starty)

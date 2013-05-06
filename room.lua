@@ -114,7 +114,7 @@ function Room:placeObject(obj, required)
 
 	local objdesc = objects[obj]
 	if objdesc == nil then
-		print("trying to place nonexistent object:", obj)
+--		print("trying to place nonexistent object:", obj)
 		return
 	end
 

@@ -199,7 +199,7 @@ function SpriteManager:getSpriteData(strData)
 end
 
 function SpriteManager:createSprite(strData, strAnimation)
-	print(self.spriteData)
+--	print(self.spriteData)
 	local sprite = Sprite()
 	
 	if strData ~= nil then

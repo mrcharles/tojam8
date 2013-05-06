@@ -38,7 +38,7 @@ function Quest:testResolveTouch(other)
 	end
 
 	if other:isA(GameObject) then
-		print("gob")
+--		print("gob")
 		if step[2] == other.type then 
 			self:completeStep()
 			return

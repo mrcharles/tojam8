@@ -3,8 +3,8 @@ module(..., package.seeall);
 local spriteData = {}
 
 function getSpriteData(strData)
-	print("getSpriteData()")
-	print(strData)
+--	print("getSpriteData()")
+--	print(strData)
 	if spriteData[strData] == nil then
 		local chunk = love.filesystem.load( "assets/sprites/"..strData..".lua" ) -- load the chunk 
 		spriteData[strData] = chunk("assets/sprites/")

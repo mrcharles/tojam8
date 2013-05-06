@@ -8,7 +8,7 @@ local Entity = require 'entity'
 local PlainSprite = Tools:Class(Entity)
 
 function PlainSprite:init(strData, strAnimation)
-	print(type(strAnimation))
+--	print(type(strAnimation))
 	Entity.init(self)
 
 

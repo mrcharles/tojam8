@@ -108,7 +108,7 @@ end
 function World:enter(player, collision, dir)
 	self:addEntity(player, collision)
 
-	print("entering with dir ",dir)
+--	print("entering with dir ",dir)
 	--find spawn or stairs up
 
 	if dir == 0 then -- spawn
@@ -166,7 +166,7 @@ function World:addRectangle(x,y,w,h,tile)
 		table.insert(parts, shape)
 		if tile.class then
 			--print("tile class",tile.class)
-			print(l,t)
+--			print(l,t)
 			table.insert(self.gameobjects, GameObjectsClasses[tile.class]:new(self,shape, x, y))
 		end
 	else

@@ -69,7 +69,7 @@ function game:enterFloor(level, dir)
 	self.currentfloor = level
 	self.world = self.building:getFloorWorld(level)
 	self.player:setPos(0,0)
-	print("dir",dir)
+--	print("dir",dir)
 	self.world:enter(self.player, {-10,-15, 20,30}, dir)
 
 	if self.player.level == level then -- initiate main quest

@@ -276,7 +276,7 @@ function QuestManager:mainQuest(level, player)
 
 	function onComplete()
 		self:handleResult(player, q.completeresult)
-		player:say( playerMainStrings[ math.random( #playerMainStrings) ], 3)
+		player:say( playerMainStrings[ math.random( #playerMainStrings) ], 5)
 		player.level = player.level + 1
 	end
 
@@ -371,7 +371,7 @@ function QuestManager:generateQuestion(player, npc)
 	local options = Tools:shuffle(q.answers)
 
 	local function handler(choice)
-		print("got choice",choice)
+--		print("got choice",choice)
 		if choice then
 			self:handleResult(player, options[choice][2])
 			self:doQuip(npc, options[choice][3])
