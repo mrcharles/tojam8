@@ -25,6 +25,8 @@ function Player:init()
 	self.paletteIndex = math.random(8) - 1
 	self.sprite.effect:setPaletteIndex(self.paletteIndex)
 	self.level = 1
+	self.assignedquest = 0
+	self.zoom = 2
 
 	self.quests = {}
 

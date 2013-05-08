@@ -269,14 +269,16 @@ end
 
 function QuestManager:mainQuest(level, player)
 	local q = mainquests[ level ]
-	if not q or q.assigned then return end
+	if not q or level <= player.assignedquest then return end
 
-	q.assigned = true
+	print("player's level is ",player.level)
+	player.assignedquest = level
 	player:say(q.text)
 
 	function onComplete()
 		self:handleResult(player, q.completeresult)
-		player:say( playerMainStrings[ math.random( #playerMainStrings) ], 5)
+		player:say( playerMainStrings[ math.random( #playerMainStrings) ], 7)
+		player.completedquest = player.level
 		player.level = player.level + 1
 	end
 
