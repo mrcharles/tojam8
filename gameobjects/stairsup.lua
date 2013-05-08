@@ -17,6 +17,7 @@ end
 function StairsUp:handleTouch(other)
 	print("GOING UP!")
 	if other:isA(Player) then
+		other.nextlevelenabled = nil
 		self.world:changeLevel(1)
 	end
 	--self.world:switch

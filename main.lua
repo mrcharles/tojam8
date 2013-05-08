@@ -130,6 +130,12 @@ function game:draw()
 	Button:draw()
 end
 
+function game:keypressed()
+	if self.world.pausetime then
+		self.world.pausetime = nil
+	end
+end
+
 function gameover:init()
 	self.titlefont = love.graphics.newFont("assets/SpecialElite.ttf", 72)
 	self.buttonfont = love.graphics.newFont("assets/SpecialElite.ttf", 48)

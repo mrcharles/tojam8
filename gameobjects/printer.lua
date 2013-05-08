@@ -15,8 +15,6 @@ function Printer:init(world, shape, x, y)
 end
 
 function Printer:handleTouch(other)
-	print("touched printer")
-
 	if other:isA(Player) then
 		other:handleTouch(self)
 	end

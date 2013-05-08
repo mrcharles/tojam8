@@ -216,10 +216,26 @@ function clamp(min,max,val)
 end
 
 function World:update(dt)
-    for i,e in ipairs(self.entities) do
-    	e:update(dt)
-    end
-    self.Collider:update(dt)
+
+	local updateentities = true
+	if self.pausetime then
+		self.pausetime = self.pausetime - dt
+		if self.pausetime > 0 then
+			updateentities = false
+		else
+			self.pausetime = nil
+		end
+	end
+
+
+
+	if updateentities then
+
+	    for i,e in ipairs(self.entities) do
+	    	e:update(dt)
+	    end
+	    self.Collider:update(dt)
+	   end
 
     --camera update
     if self.focus then

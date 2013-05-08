@@ -38,7 +38,7 @@ function TextBubble:draw()
 	love.graphics.setColor(235,235,235)
 	r:draw("fill", 3)
 
-	love.graphics.polygon("fill", cx + 2, cy + oy + 3, cx + 2, cy + oy + 18, cx + 9, cy + oy + 3)
+	love.graphics.polygon("fill", cx + 2, cy + oy + 3, cx + 2, cy + oy + 14, cx + 10, cy + oy + 3)
 
 
 	love.graphics.setColor(0,0,0)

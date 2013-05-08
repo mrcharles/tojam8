@@ -9,7 +9,7 @@ local NPC = require 'npc'
 local Player = Tools:Class(Entity)
 
 local questx, questy = 20, 20
-local questheight, widthpersec = 30, 15
+local questheight, widthpersec = 30, 8
 local questspace = 10
 
 --	love.graphics.draw(image, 0,0,0,scale,scale,offsetx,offsety)
@@ -116,21 +116,8 @@ function Player:logic(dt)
 		end
 	end
 
-	--zoom
 
-	local height = questy + #self.quests * (questheight + questspace)
-
-	if not self.world then return end
-	if height > 300 then
-		self.zoom = 600 / height
-
-		self.world.camera.zoom = self.zoom
-	else
-		self.zoom = 2
-		self.world.camera.zoom = 2
-	end
-
-	self.sprite:update(dt)
+self.sprite:update(dt)
 end
 
 function Player:handleTouch(other)
@@ -147,6 +134,21 @@ end
 function Player:draw()
 	love.graphics.push()
 	Base.preDraw(self)
+
+	--zoom
+
+	local height = questy + #self.quests * (questheight + questspace)
+
+	if not self.world then return end
+	if height > 300 then
+		self.zoom = 600 / height
+
+		self.world.camera.zoom = self.zoom
+	else
+		self.zoom = 2
+		self.world.camera.zoom = 2
+	end
+
 
 	love.graphics.translate(0,13)
 	self.sprite:draw()
@@ -186,6 +188,11 @@ function Player:drawUI()
 		y = y + (questheight + questspace) * self.zoom
 	end
 
+
+	if self.nextlevelenabled then
+		love.graphics.setColor( 190,190,190)
+		love.graphics.printf("Level Up! Proceed to stairs for new tasks.", 100, 500, 600, "center")
+	end
 end
 
 return Player

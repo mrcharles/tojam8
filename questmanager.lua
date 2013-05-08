@@ -149,7 +149,7 @@ local quests =
 {
 	copy = {
 		text = "Go copy this form!",
-		time = 30,
+		time = 35,
 		needspeople = nil,
 		steps = {
 					{"touch", "printer"},
@@ -159,7 +159,7 @@ local quests =
 	},		
 	sendemail = {
 		text = "Go send an email!",
-		time = 15,
+		time = 20,
 		needspeople = nil,
 		steps = {
 					{"touch", "computer"},
@@ -169,7 +169,7 @@ local quests =
 	},		
 	copyreturn = {
 		text = "Go make a copy for me!",
-		time = 40,
+		time = 50,
 		needspeople = { "originator" },
 		steps = {
 					{"touch", "printer", 3, "Gotta return this."},
@@ -180,10 +180,10 @@ local quests =
 	},		
 	checkresponse = {
 		text = "Check if so and so emailed.",
-		time = 25,
+		time = 30,
 		needspeople = { "originator" },
 		steps = {
-					{"touch", "computer", 3, "Back to the micromanager"},
+					{"touch", "computer", 3, "Back to the manager"},
 					{"touch", "person"}
 				},
 		--completeresult = "",
@@ -209,7 +209,7 @@ local quests =
 	},		
 	resetprinter = {
 		text = "Go reset the printer!",
-		time = 15,
+		time = 20,
 		needspeople = nil,
 		steps = {
 					{"touch", "printer"},
@@ -263,7 +263,9 @@ function QuestManager:assignQuest(player, npc)
 		return
 	end
 
-	self:generateQuest(player,npc)
+	if self:generateQuest(player,npc) then
+		player.world.pausetime = 3
+	end
 
 end
 
@@ -274,12 +276,14 @@ function QuestManager:mainQuest(level, player)
 	print("player's level is ",player.level)
 	player.assignedquest = level
 	player:say(q.text)
+	player.world.pausetime = 3
 
 	function onComplete()
 		self:handleResult(player, q.completeresult)
 		player:say( playerMainStrings[ math.random( #playerMainStrings) ], 7)
 		player.completedquest = player.level
 		player.level = player.level + 1
+		player.nextlevelenabled = true
 	end
 
 	function onFail()
@@ -323,7 +327,7 @@ function QuestManager:generateQuest(player,npc)
 
 	if qid == "question" then
 		self:askQuestion(player,npc)
-		return
+		return 
 	end
 
 	local q = quests[qid]
@@ -358,6 +362,8 @@ function QuestManager:generateQuest(player,npc)
 	end
 
 	player:addQuest( Quest:new(q.time, q.steps, targets, onComplete, onFail))
+
+	return true
 end
 
 function QuestManager:doQuip(npc, type)
